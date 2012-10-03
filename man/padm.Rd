@@ -1,0 +1,40 @@
+\name{padm}
+\alias{padm}
+\title{Pade approximation of dense matrix exponential.}
+\usage{
+  padm(x, t = 1, order = 6L)
+}
+\arguments{
+  \item{x}{\code{numeric} or \code{complex} matrix.}
+
+  \item{t}{time. Default 1.}
+
+  \item{order}{\code{integer}, the order of the Pade
+  approximation. The default (6) is usually enough.}
+}
+\value{
+  The matrix exponential, \eqn{\exp(tx)}{exp(tx)}, as a
+  \code{numeric} or \code{complex} matrix.
+}
+\description{
+  R wrapper of the Expokit subroutines __PADM for dense
+  matrix exponentiation via the Pade approximation.
+}
+\details{
+  The underlying Fortran routines compute the matrix
+  exponential using a combination of scaling and squaring
+  and the irreducible rational Pade approximation.
+}
+\author{
+  Niels Richard Hansen \email{Niels.R.Hansen@math.ku.dk}
+}
+\references{
+  Sidje, R. B. (1998) Expokit.Software Package for
+  Computing Matrix Exponentials. ACM Trans. Math. Softw.
+  24(1), 130-156.
+}
+\seealso{
+  \code{\link[Matrix]{expm}}, \code{\link[expm]{expm}},
+  \code{\link{expv}}
+}
+
