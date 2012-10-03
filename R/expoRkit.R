@@ -21,7 +21,7 @@
 
 ##' R wrapper of the Expokit Fortran subroutines __EXPV and __PHIV for
 ##' sparse matrix exponentiation. In general, these routines compute
-##' the solution at time point \eqn{t} of the ODE \deqn{w'(t) = A w(t)
+##' the solution at time point \eqn{t} of the ODE \deqn{w'(t) = x w(t)
 ##' + u} with initial condition \eqn{w(0) = v}. 
 ##' 
 ##'
@@ -38,7 +38,7 @@
 ##' \code{ia} and \code{ja} contain the 1-based column and row
 ##' numbers, respectively, for the non-zero elements.
 ##' @title Expokit __EXPV and __PHIV wrapper.
-##' @param a \code{numeric} or \code{complex} non-zero entries in the \eqn{A}-matrix.
+##' @param a \code{numeric} or \code{complex} non-zero entries in the \eqn{x}-matrix.
 ##' @param ia \code{integer} index/pointer. Precise meaning depends on
 ##' storage format.
 ##' @param ja \code{integer} index/pointer. Precise meaning depends on
@@ -53,7 +53,7 @@
 ##' @param anorm A norm of the matrix. Default is the sup-norm.
 ##' @param Markov \code{logical}, if \code{TRUE} the (transposed)
 ##' matrix is taken to be an intensity matrix and steps are taken to
-##' ensure that the computed result is a porbability vector. Default \code{FALSE}. 
+##' ensure that the computed result is a probability vector. Default \code{FALSE}. 
 ##' @param m \code{integer}, the maximum size for the Krylov basis. 
 ##' @param tol \code{numeric}. Default \code{1e-10}.
 ##' @param itrace \code{integer}, 0 (default) means no trace
@@ -66,8 +66,8 @@
 ##' @seealso \code{\link[Matrix]{expm}}, \code{\link[expm]{expm}},
 ##' \code{\link{expv}}
 ##' @author Niels Richard Hansen \email{Niels.R.Hansen@@math.ku.dk}
-##'
-Rexpv <- function(a, ia, ja, n, v, t = 1, storage = 'CCS', u = NULL,
+##' @useDynLib expoRkit
+Rexpv <- function(a, ia, ja, n, v, t = 1.0, storage = 'CCS', u = NULL,
                   anorm = max(abs(a)), Markov = FALSE, m = 30L, tol =
                   1.0e-10, itrace = 0L) {
   m <- as.integer(min(m, n-1))
@@ -192,19 +192,20 @@ Rexpv <- function(a, ia, ja, n, v, t = 1, storage = 'CCS', u = NULL,
 ##' using a combination of scaling and squaring and the irreducible
 ##' rational Pade approximation.
 ##' @title Pade approximation of dense matrix exponential. 
-##' @param A \code{numeric} or \code{complex} matrix. 
+##' @param x \code{numeric} or \code{complex} matrix. 
 ##' @param t time. Default 1. 
 ##' @param order \code{integer}, the order of the Pade
 ##' approximation. The default (6) is usually enough.
-##' @return The matrix exponential, \eqn{\exp(tA)}{exp(tA)}, as a
+##' @return The matrix exponential, \eqn{\exp(tx)}{exp(tx)}, as a
 ##' \code{numeric} or \code{complex} matrix.
 ##' @references Sidje, R. B. (1998) Expokit.Software Package for Computing Matrix
 ##' Exponentials. ACM Trans. Math. Softw. 24(1), 130-156.
 ##' @seealso \code{\link[Matrix]{expm}}, \code{\link[expm]{expm}},
 ##' \code{\link{expv}}
 ##' @author Niels Richard Hansen \email{Niels.R.Hansen@@math.ku.dk}
-padm <- function(A, t = 1.0, order = 6L) {
-  x <- as.matrix(A)
+##' @export
+padm <- function(x, t = 1.0, order = 6L) {
+  x <- as.matrix(x)
   n <- as.integer(nrow(x))
   if (n != ncol(x))
     stop("Matrix argument 'x' must be square.")
