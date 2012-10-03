@@ -40,13 +40,13 @@
 ##' be \eqn{Q^T} to get the desired solution.
 ##'
 ##' The solution is computed using the Fortran package
-##' Expokit. Methods are available for classes implemented in the
-##' Matrix package as well as the SparseM package. The implementation
-##' avoids the computation of the full matrix exponential of \eqn{tx}
-##' and the approach is advantageous when we want to compute
-##' \eqn{w(t)} for one or a few initial values \eqn{v}. The full
-##' matrix exponential should \emph{not} be computed this way by
-##' looping over \eqn{n} different initial values.
+##' Expokit. Methods are available for matrix classes implemented in
+##' the Matrix package as well as the SparseM package. The
+##' implementation avoids the computation of the full matrix
+##' exponential of \eqn{tx} and the approach is advantageous when we
+##' want to compute \eqn{w(t)} for one or a few initial values
+##' \eqn{v}. The full matrix exponential should \emph{not} be computed
+##' this way by looping over \eqn{n} different initial values.
 ##' 
 ##' Though there is a method implemented for ordinary (dense)
 ##' matrices, such a matrix is simply coerced into a

@@ -47,7 +47,7 @@
 ##' @param v \code{numeric} or \code{complex} vector.
 ##' @param t time. Default \code{1}.
 ##' @param storage \code{character}, one of \code{'CCS'} (Compressed
-##' Column Storage), \code{'CRS'} Compressed Row Storage or
+##' Column Storage), \code{'CRS'} (Compressed Row Storage) or
 ##' \code{'COO'} (COOrdinate list). Default \code{'CCS'}.
 ##' @param u \code{numeric} or \code{complex} vector. Default \code{NULL}.
 ##' @param anorm A norm of the matrix. Default is the sup-norm.
@@ -61,7 +61,7 @@
 ##' from Expokit.
 ##' @return The solution, \eqn{w}, of the ODE as a \code{numeric} or
 ##' \code{complex} vector of length \eqn{n}.
-##' @references Sidje, R. B. (1998) Expokit.Software Package for Computing Matrix
+##' @references Sidje, R. B. (1998) Expokit. Software Package for Computing Matrix
 ##' Exponentials. ACM Trans. Math. Softw. 24(1), 130-156.
 ##' @seealso \code{\link[Matrix]{expm}}, \code{\link[expm]{expm}},
 ##' \code{\link{expv}}
@@ -198,7 +198,7 @@ Rexpv <- function(a, ia, ja, n, v, t = 1.0, storage = 'CCS', u = NULL,
 ##' approximation. The default (6) is usually enough.
 ##' @return The matrix exponential, \eqn{\exp(tx)}{exp(tx)}, as a
 ##' \code{numeric} or \code{complex} matrix.
-##' @references Sidje, R. B. (1998) Expokit.Software Package for Computing Matrix
+##' @references Sidje, R. B. (1998) Expokit. Software Package for Computing Matrix
 ##' Exponentials. ACM Trans. Math. Softw. 24(1), 130-156.
 ##' @seealso \code{\link[Matrix]{expm}}, \code{\link[expm]{expm}},
 ##' \code{\link{expv}}

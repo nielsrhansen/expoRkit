@@ -29,7 +29,7 @@
   Niels Richard Hansen \email{Niels.R.Hansen@math.ku.dk}
 }
 \references{
-  Sidje, R. B. (1998) Expokit.Software Package for
+  Sidje, R. B. (1998) Expokit. Software Package for
   Computing Matrix Exponentials. ACM Trans. Math. Softw.
   24(1), 130-156.
 }
