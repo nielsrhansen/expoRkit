@@ -11,7 +11,19 @@ Installation can be done from the source in this repository using the
 	:::R
 	install.packages("devtools")  ## if 'devtools' not installed
 	library(devtools)
-	install_bitbucket(repo = "expoRkit", username = "nielsrhansen")
+	install_bitbucket(repo = "exporkit", username = "nielsrhansen")
+
+If you experience permission problems during installation, try
+installing in a local directory, e.g.
 	
+	install_bitbucket(repo = "exporkit", username = "nielsrhansen",
+	                  args = "--library=~/local/R/library")
+					  
+provided that the directory exists. Then load the package
+from the local library
+
+	library(expoRkit, lib.loc = "~/local/R/library")
+
+
 
 					  
