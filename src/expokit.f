@@ -1580,8 +1580,7 @@
 
       implicit none
       integer          m, ldh
-      double precision t, H(ldh,m), y(m)
-      complex*16       wsp(m*(m+2))
+      double precision t, H(ldh,m), y(m), wsp(m*(m+2))
 
 *-----Purpose----------------------------------------------------------|
 *
