@@ -24,12 +24,12 @@
 *
 *     n      : (input) order of the principal matrix A.
 *
-*     ia, ja, a (input):
-*           sparse matrix data stored in the format given in an 
-*           appropriate format. Currently CCS, CRS and COO supported
-*           with implemented external matrix-vector product functions.
+*     ia, ja, a (input): 
+*           sparse matrix data stored in an appropriate
+*           format. Currently CCS, CRS and COO supported with
+*           implemented external matrix-vector product functions.
 *
-*     nz     : (input) the actual number of non zero entries
+*     nz     : (input) the actual number of non zero entries.
 *                      
 *     m      : (input) maximum size for the Krylov basis.
 *                      
@@ -40,7 +40,8 @@
 *                      
 *     v(n)   : (input) given operand vector.
 *                      
-*     w(n)   : (output) computed approximation of exp(t*A)*v.
+*     w(n) : (output) computed approximation of exp(t*A)*v or 
+*            exp(t*A)*v + t*phi(t*A)*u.
 *
 *     tol    : (input/output) the requested accuracy tolerance on w. 
 *              If on input tol=0.0d0 or tol is too small (tol.le.eps)
