@@ -23,8 +23,8 @@
   \item{t}{time. Default \code{1}.}
 
   \item{storage}{\code{character}, one of \code{'CCS'}
-  (Compressed Column Storage), \code{'CRS'} Compressed Row
-  Storage or \code{'COO'} (COOrdinate list). Default
+  (Compressed Column Storage), \code{'CRS'} (Compressed Row
+  Storage) or \code{'COO'} (COOrdinate list). Default
   \code{'CCS'}.}
 
   \item{u}{\code{numeric} or \code{complex} vector. Default

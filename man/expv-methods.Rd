@@ -35,10 +35,10 @@
   \item{t}{a \code{numeric} vector of time points at which
   the solution is computed.}
 
-  \item{u}{a \code{numeric} vector.}
+  \item{u}{a \code{numeric} vector. Default \code{NULL}.}
 
   \item{Markov}{\code{logical}. If \code{TRUE} the matrix
-  is taken to be an intensity matrix and steps are taken to
+  is taken to be an rate matrix and steps are taken to
   ensure that the computed result is a probability vector.
   Default \code{FALSE}.}
 
@@ -80,14 +80,14 @@
   take \eqn{x} to be \eqn{Q^T} to get the desired solution.
 
   The solution is computed using the Fortran package
-  Expokit. Methods are available for classes implemented in
-  the Matrix package as well as the SparseM package. The
-  implementation avoids the computation of the full matrix
-  exponential of \eqn{tx} and the approach is advantageous
-  when we want to compute \eqn{w(t)} for one or a few
-  initial values \eqn{v}. The full matrix exponential
-  should \emph{not} be computed this way by looping over
-  \eqn{n} different initial values.
+  Expokit. Methods are available for matrix classes
+  implemented in the Matrix package as well as the SparseM
+  package. The implementation avoids the computation of the
+  full matrix exponential of \eqn{tx} and the approach is
+  advantageous when we want to compute \eqn{w(t)} for one
+  or a few initial values \eqn{v}. The full matrix
+  exponential should \emph{not} be computed this way by
+  looping over \eqn{n} different initial values.
 
   Though there is a method implemented for ordinary (dense)
   matrices, such a matrix is simply coerced into a
@@ -96,6 +96,10 @@
   handled as such, e.g. using the classes and methods from
   the Matrix package. Dense intermediates should be
   avoided.
+
+  The \code{x} matrix is allowed to be a dense complex
+  matrix in which case \code{v} and \code{u} are also
+  allowed to be complex.
 }
 \author{
   Niels Richard Hansen \email{Niels.R.Hansen@math.ku.dk}

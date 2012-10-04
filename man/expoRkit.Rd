@@ -30,7 +30,7 @@
   24(1), 130-156.
 }
 \seealso{
-  \code{link{expv}}
+  \code{\link{expv}}
 }
 \keyword{package}
 

@@ -54,14 +54,17 @@
 ##' recommended that large sparse matrices are stored and handled as
 ##' such, e.g. using the classes and methods from the Matrix
 ##' package. Dense intermediates should be avoided.
+##'
+##' The \code{x} matrix is allowed to be a dense complex matrix in
+##' which case \code{v} and \code{u} are also allowed to be complex.
 ##' @title Matrix exponentiation and more. 
 ##' @param x a matrix. 
 ##' @param v a \code{numeric} vector. The initial value. 
 ##' @param t a \code{numeric} vector of time points at which the
 ##' solution is computed.
-##' @param u a \code{numeric} vector. 
+##' @param u a \code{numeric} vector. Default \code{NULL}.
 ##' @param Markov \code{logical}. If \code{TRUE} the matrix is taken
-##' to be an intensity matrix and steps are taken to ensure that the
+##' to be an rate matrix and steps are taken to ensure that the
 ##' computed result is a probability vector. Default \code{FALSE}.
 ##' @param transpose \code{logical}. If \code{TRUE} transpose the
 ##' matrix before the solution is computed. Default equals
