@@ -3,8 +3,8 @@
 \title{Expokit __EXPV and __PHIV wrapper.}
 \usage{
   Rexpv(a, ia, ja, n, v, t = 1, storage = "CCS", u = NULL,
-    anorm = max(abs(a)), Markov = FALSE, m = 30L,
-    tol = 1e-10, itrace = 0L)
+    anorm = max(abs(a)), Markov = FALSE, m = 30L, tol = 0,
+    itrace = 0L, mxstep = 10000L)
 }
 \arguments{
   \item{a}{\code{numeric} or \code{complex} non-zero
@@ -41,11 +41,17 @@
   \item{m}{\code{integer}, the maximum size for the Krylov
   basis.}
 
-  \item{tol}{\code{numeric}. Default \code{1e-10}.}
+  \item{tol}{\code{numeric}. A value of 0 (default) means
+  square root of machine eps.}
 
   \item{itrace}{\code{integer}, 0 (default) means no trace
-  information from Expokit, and 1 means trace information
-  printed from Expokit.}
+  information from Expokit, 1 means print 'happy
+  breakdown', and 2 means all trace information printed
+  from Expokit.}
+
+  \item{mxstep}{\code{integer}. Maximum allowable number of
+  integration steps. The value 0 means an infinite number
+  of steps. Default 10000.}
 }
 \value{
   The solution, \eqn{w}, of the ODE as a \code{numeric} or
@@ -68,11 +74,61 @@
   \code{storage} argument. For CCS, \code{ia} contains
   1-based row numbers of non-zero elements and \code{ja}
   contains 1-based pointers to the initial element for each
-  column. For CRS, \code{ia} contains 1-based column
-  numbers of non-zero elements and \code{ja} are 1-based
+  column. For CRS, \code{ja} contains 1-based column
+  numbers of non-zero elements and \code{ia} are 1-based
   pointers to the initial element for each row. For COO,
   \code{ia} and \code{ja} contain the 1-based column and
   row numbers, respectively, for the non-zero elements.
+}
+\examples{
+### A CCS 3 by 3 real matrix. The last element in 'ja' is the number of
+### non-zero elements + 1.
+a <- c(-1, 1, -2, -3, 1)
+ia <- c(1, 3, 2, 3, 1)
+ja <- c(1, 3, 5, 6)
+
+v <- c(1, 1, 1)
+wCCS <- expoRkit:::Rexpv(a, ia, ja, 3, v = v)
+
+### COO storage instead.
+ja <- c(1, 1, 2, 2, 3)
+wCOO <- expoRkit:::Rexpv(a, ia, ja, 3, v = v, storage = 'COO')
+
+### CRS storage instead.
+a <- c(-1, 1, -2, 1, -3)
+ja <- c(1, 3, 2, 1, 2)
+ia <- c(1, 3, 4, 6)
+wCRS <- expoRkit:::Rexpv(a, ia, ja, 3, v = v, storage = 'CRS')
+
+cbind(wCCS, wCOO, wCRS)
+
+stopifnot(all.equal(wCCS, wCOO),
+          all.equal(wCCS, wCRS),
+          all.equal(wCRS, wCOO))
+
+### Complex version
+a <- c(-1, 1i, -2i, -3, 1)
+ia <- c(1, 3, 2, 3, 1)
+ja <- c(1, 3, 5, 6)
+
+v <- c(1, 1, 1)
+wCCS <- expoRkit:::Rexpv(a, ia, ja, 3, v = v)
+
+### COO storage instead.
+ja <- c(1, 1, 2, 2, 3)
+wCOO <- expoRkit:::Rexpv(a, ia, ja, 3, v = v, storage = 'COO')
+
+### CRS storage instead.
+a <- c(-1, 1, -2i, 1i, -3)
+ja <- c(1, 3, 2, 1, 2)
+ia <- c(1, 3, 4, 6)
+wCRS <- expoRkit:::Rexpv(a, ia, ja, 3, v = v, storage = 'CRS')
+
+cbind(wCCS, wCOO, wCRS)
+
+stopifnot(all.equal(wCCS, wCOO),
+          all.equal(wCCS, wCRS),
+          all.equal(wCRS, wCOO))
 }
 \author{
   Niels Richard Hansen \email{Niels.R.Hansen@math.ku.dk}

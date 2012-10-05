@@ -17,3 +17,4 @@ Collate:
     'expoRkit.R'
     'expv.R'
     'expoRkit-package.R'
+    'data.R'

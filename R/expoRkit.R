@@ -32,8 +32,8 @@
 ##' \code{ia} and \code{ja} has to be specified via the \code{storage}
 ##' argument. For CCS, \code{ia} contains 1-based row numbers of
 ##' non-zero elements and \code{ja} contains 1-based pointers to the
-##' initial element for each column. For CRS, \code{ia} contains
-##' 1-based column numbers of non-zero elements and \code{ja} are
+##' initial element for each column. For CRS, \code{ja} contains
+##' 1-based column numbers of non-zero elements and \code{ia} are
 ##' 1-based pointers to the initial element for each row. For COO,
 ##' \code{ia} and \code{ja} contain the 1-based column and row
 ##' numbers, respectively, for the non-zero elements.
@@ -55,10 +55,13 @@
 ##' matrix is taken to be an intensity matrix and steps are taken to
 ##' ensure that the computed result is a probability vector. Default \code{FALSE}. 
 ##' @param m \code{integer}, the maximum size for the Krylov basis. 
-##' @param tol \code{numeric}. Default \code{1e-10}.
+##' @param tol \code{numeric}. A value of 0 (default) means square
+##' root of machine eps.
 ##' @param itrace \code{integer}, 0 (default) means no trace
-##' information from Expokit, and 1 means trace information printed
-##' from Expokit.
+##' information from Expokit, 1 means print 'happy breakdown', and 2
+##' means all trace information printed from Expokit.
+##' @param mxstep \code{integer}. Maximum allowable number of
+##' integration steps. The value 0 means an infinite number of steps. Default 10000.
 ##' @return The solution, \eqn{w}, of the ODE as a \code{numeric} or
 ##' \code{complex} vector of length \eqn{n}.
 ##' @references Sidje, R. B. (1998) Expokit. Software Package for Computing Matrix
@@ -66,10 +69,59 @@
 ##' @seealso \code{\link[Matrix]{expm}}, \code{\link[expm]{expm}},
 ##' \code{\link{expv}}
 ##' @author Niels Richard Hansen \email{Niels.R.Hansen@@math.ku.dk}
+##' @examples
+##' ### A CCS 3 by 3 real matrix. The last element in 'ja' is the number of
+##' ### non-zero elements + 1. 
+##' a <- c(-1, 1, -2, -3, 1)
+##' ia <- c(1, 3, 2, 3, 1) 
+##' ja <- c(1, 3, 5, 6)
+##' 
+##' v <- c(1, 1, 1)
+##' wCCS <- expoRkit:::Rexpv(a, ia, ja, 3, v = v)
+##' 
+##' ### COO storage instead.
+##' ja <- c(1, 1, 2, 2, 3)  
+##' wCOO <- expoRkit:::Rexpv(a, ia, ja, 3, v = v, storage = 'COO')
+##' 
+##' ### CRS storage instead.
+##' a <- c(-1, 1, -2, 1, -3)
+##' ja <- c(1, 3, 2, 1, 2)
+##' ia <- c(1, 3, 4, 6)
+##' wCRS <- expoRkit:::Rexpv(a, ia, ja, 3, v = v, storage = 'CRS')
+##' 
+##' cbind(wCCS, wCOO, wCRS)
+##' 
+##' stopifnot(all.equal(wCCS, wCOO),
+##'           all.equal(wCCS, wCRS),
+##'           all.equal(wCRS, wCOO))
+##'
+##' ### Complex version
+##' a <- c(-1, 1i, -2i, -3, 1)
+##' ia <- c(1, 3, 2, 3, 1) 
+##' ja <- c(1, 3, 5, 6)
+##' 
+##' v <- c(1, 1, 1)
+##' wCCS <- expoRkit:::Rexpv(a, ia, ja, 3, v = v)
+##' 
+##' ### COO storage instead.
+##' ja <- c(1, 1, 2, 2, 3)  
+##' wCOO <- expoRkit:::Rexpv(a, ia, ja, 3, v = v, storage = 'COO')
+##' 
+##' ### CRS storage instead.
+##' a <- c(-1, 1, -2i, 1i, -3)
+##' ja <- c(1, 3, 2, 1, 2)
+##' ia <- c(1, 3, 4, 6)
+##' wCRS <- expoRkit:::Rexpv(a, ia, ja, 3, v = v, storage = 'CRS')
+##' 
+##' cbind(wCCS, wCOO, wCRS)
+##' 
+##' stopifnot(all.equal(wCCS, wCOO),
+##'           all.equal(wCCS, wCRS),
+##'           all.equal(wCRS, wCOO))
 ##' @useDynLib expoRkit
 Rexpv <- function(a, ia, ja, n, v, t = 1.0, storage = 'CCS', u = NULL,
                   anorm = max(abs(a)), Markov = FALSE, m = 30L, tol =
-                  1.0e-10, itrace = 0L) {
+                  0, itrace = 0L, mxstep = 10000L) {
   m <- as.integer(min(m, n-1))
   sflag <- switch(storage,
                   "CCS" = 1,
@@ -93,6 +145,7 @@ Rexpv <- function(a, ia, ja, n, v, t = 1.0, storage = 'CCS', u = NULL,
                           v = as.numeric(v),
                           w = numeric(n),
                           tol = as.numeric(tol)[1],
+                          mxstep = as.integer(mxstep),
                           anorm = as.numeric(anorm)[1],
                           itrace = as.integer(itrace)[1],
                           iflag = integer(1),
@@ -110,6 +163,7 @@ Rexpv <- function(a, ia, ja, n, v, t = 1.0, storage = 'CCS', u = NULL,
                           v = as.numeric(v),
                           w = numeric(n),
                           tol = as.numeric(tol)[1],
+                          mxstep = as.integer(mxstep),
                           anorm = as.numeric(anorm)[1],
                           itrace = as.integer(itrace)[1],
                           iflag = integer(1),
@@ -127,6 +181,7 @@ Rexpv <- function(a, ia, ja, n, v, t = 1.0, storage = 'CCS', u = NULL,
                           v = as.complex(v),
                           w = complex(n),
                           tol = as.numeric(tol)[1],
+                          mxstep = as.integer(mxstep),
                           anorm = as.numeric(anorm)[1],
                           itrace = as.integer(itrace)[1],
                           iflag = integer(1),
@@ -153,6 +208,7 @@ Rexpv <- function(a, ia, ja, n, v, t = 1.0, storage = 'CCS', u = NULL,
                           v = as.numeric(v),
                           w = numeric(n),
                           tol = as.numeric(tol)[1],
+                          mxstep = as.integer(mxstep),
                           anorm = as.numeric(anorm)[1],
                           itrace = as.integer(itrace)[1],
                           iflag = integer(1),
@@ -171,6 +227,7 @@ Rexpv <- function(a, ia, ja, n, v, t = 1.0, storage = 'CCS', u = NULL,
                           v = as.complex(v),
                           w = complex(n),
                           tol = as.numeric(tol)[1],
+                          mxstep = as.integer(mxstep),
                           anorm = as.numeric(anorm)[1],
                           itrace = as.integer(itrace)[1],
                           iflag = integer(1),

@@ -76,6 +76,75 @@
 ##' @author Niels Richard Hansen \email{Niels.R.Hansen@@math.ku.dk}
 ##' @seealso \code{\link{Rexpv}}, \code{\link[Matrix]{expm}},
 ##' \code{\link[expm]{expm}}
+##' @examples
+##' ### Small 3 by 3 example.
+##' x <- matrix(c(-1, 0, 1,
+##'               0, -2, -3,
+##'               1, 0, 0),
+##'             3, 3)
+##' v <- c(1, 1, 1)
+##' 
+##' require(Matrix)
+##' require(SparseM)
+##' 
+##' w <- cbind(padm(x) %*% v,
+##'            expv(x, v),
+##'            expv(Matrix(x, sparse = TRUE), v),
+##'            expv(as.matrix.coo(x), v),
+##'            expv(as.matrix.csr(x), v),
+##'            expv(as.matrix.csc(x), v)
+##'            )
+##' 
+##' stopifnot(all.equal(w[, 1], w[, 2]),
+##'           all.equal(w[, 1], w[, 3]),
+##'           all.equal(w[, 1], w[, 4]),
+##'           all.equal(w[, 1], w[, 5]),
+##'           all.equal(w[, 1], w[, 6]))
+##' 
+##' u <- c(2, 0, 1)
+##' ex <- padm(x)
+##' w <- cbind(ex %*% v + (ex - diag(1, 3)) %*% solve(x, u),
+##'            expv(x, v, u = u),
+##'            expv(Matrix(x, sparse = TRUE), v, u = u),
+##'            expv(as.matrix.coo(x), v, u = u),
+##'            expv(as.matrix.csr(x), v, u = u),
+##'            expv(as.matrix.csc(x), v, u = u)
+##'            )
+##' 
+##' stopifnot(all.equal(w[, 1], w[, 2]),
+##'           all.equal(w[, 1], w[, 3]),
+##'           all.equal(w[, 1], w[, 4]),
+##'           all.equal(w[, 1], w[, 5]),
+##'           all.equal(w[, 1], w[, 6]))
+##' 
+##' ############################################################
+##' ### Linear birth-death Markov process with immigration
+##' ############################################################
+##'
+##' alpha <- 2.1  ## Death rate per individual
+##' beta <- 2     ## Birth rate per individual
+##' delta <- 20   ## Immigration rate
+##' 
+##' n <- 500L     ## state space {0, ..., n-1}
+##' i <- seq(1, n)
+##' rates <- c(alpha * i[-1], ## subdiagonal
+##'            -(c(0, alpha * i[-1]) +
+##'              c(delta, beta * i[-c(1,n)] + delta, 0)), ## diagonal
+##'            c(delta, beta * i[-c(1, n)] + delta)) ## superdiagonal
+##' j <- c(i[-n], i, i[-1])
+##' i <- c(i[-1], i, i[-n])
+##'
+##' ## Sparse rate matrix constructed without dense intermediate
+##' Q <- sparseMatrix(i = i, j = j, x = rates, dims = c(n, n))
+##'
+##' ## Evolution of uniform initial distribution
+##' p0 <- rep(1, n)/n
+##' time <- seq(0, 10, 0.2)
+##' Pt <- expv(Q, p0, t = time, Markov = TRUE)
+##' 
+##' \dontrun{matplot(1:n, Pt, type = "l")
+##' image(time, 0:(n-1), -t(Pt), col = terrain.colors(100))
+##' }
 ##' @export
 ##' @docType methods
 ##' @rdname expv-methods
@@ -129,6 +198,17 @@ setMethod("expv", signature("matrix", "vector"),
 ##' @importClassesFrom Matrix CsparseMatrix
 ##' @importMethodsFrom Matrix t
 setMethod("expv", signature("CsparseMatrix", "vector"),
+          function(x, v, t = 1.0, u = NULL,
+                   Markov = FALSE, transpose = Markov, ...) {
+            callGeneric(as(x, "dgCMatrix"), v = v, t = t, u = u,
+                        Markov = Markov, transpose = transpose, ...)
+        }
+        )
+
+##' @rdname expv-methods
+##' @aliases expv,dgCMatrix,vector-method
+##' @importClassesFrom Matrix dgCMatrix
+setMethod("expv", signature("dgCMatrix", "vector"),
           function(x, v, t = 1.0, u = NULL,
                    Markov = FALSE, transpose = Markov, ...) {
             if (transpose)
