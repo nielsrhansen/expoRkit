@@ -178,11 +178,11 @@
 *----------------------------------------------------------------------*
 
 *----------------------------------------------------------------------|
-      subroutine DMEXPV( a, ia, ja, n, nz, m, t, v, w, tol, anorm,
+      subroutine DMEXPV( a, ia, ja, n, nz, m, t, v, w, tol,mxstep,anorm, 
      .                   wsp,lwsp, iwsp,liwsp, matvec, itrace,iflag )
 
       implicit none
-      integer n, m, lwsp, liwsp, itrace, iflag, iwsp(liwsp), 
+      integer n, m, lwsp, liwsp, itrace, iflag, iwsp(liwsp), mxstep,
      .     nz, ia(*), ja(*)
       double precision t, tol, anorm, v(n), w(n), wsp(lwsp), a(*)
       external matvec
@@ -255,7 +255,8 @@
 *              computes: y(1:n) <- A*x(1:n)
 *                        where A is the principal matrix.
 *
-*     itrace : (input) running mode. 0=silent, 1=print step-by-step info
+*     itrace : (input) running mode. 0=silent, 1>=print happy breakdown,
+*              2>=print step-by-step info.  
 *
 *     iflag  : (output) exit flag.
 *              <0 - bad input arguments 
@@ -301,10 +302,9 @@
 *----------------------------------------------------------------------|
 *-----The following parameters may also be adjusted herein-------------|
 *
-      integer mxstep, mxreject, ideg
+      integer mxreject, ideg
       double precision delta, gamma
-      parameter( mxstep   = 500,
-     .           mxreject = 0,
+      parameter( mxreject = 0,
      .           ideg     = 6,
      .           delta    = 1.2d0,
      .           gamma    = 0.9d0 )
@@ -432,7 +432,9 @@
          hj1j = DNRM2( n, wsp(j1v),1 )
 *---     if `happy breakdown' go straightforward at the end ... 
          if ( hj1j.le.break_tol ) then
-            print*,'happy breakdown: mbrkdwn =',j,' h =',hj1j
+            if ( itrace.ge.1 ) then
+               print*,'happy breakdown: mbrkdwn =',j,' h =',hj1j
+            endif
             k1 = 0
             ibrkflag = 1
             mbrkdwn = j
@@ -507,7 +509,7 @@
          t_step = gamma * t_step * (t_step*tol/err_loc)**xm
          p1 = 10.0d0**(NINT( LOG10( t_step )-SQR1 )-1)
          t_step = AINT( t_step/p1 + 0.55d0 ) * p1
-         if ( itrace.ne.0 ) then
+         if ( itrace.ge.2 ) then
             print*,'t_step =',t_old
             print*,'err_loc =',err_loc
             print*,'err_required =',delta*t_old*tol
@@ -560,7 +562,7 @@
 *
 *---  display and keep some information ...
 *
-      if ( itrace.ne.0 ) then
+      if ( itrace.ge.2 ) then
          print*,'integration',nstep,'---------------------------------'
          print*,'scale-square =',ns
          print*,'wnorm     =',beta
@@ -1811,11 +1813,11 @@
       END
 *----------------------------------------------------------------------|
 *----------------------------------------------------------------------|
-      subroutine DGEXPV( a, ia, ja, n, nz, m, t, v, w, tol, anorm,
+      subroutine DGEXPV( a, ia, ja, n, nz, m, t, v, w, tol,mxstep,anorm,
      .                   wsp,lwsp, iwsp,liwsp, matvec, itrace,iflag )
 
       implicit none
-      integer n, m, lwsp, liwsp, itrace, iflag, iwsp(liwsp),
+      integer n, m, lwsp, liwsp, itrace, iflag, iwsp(liwsp), mxstep,
      .     nz, ia(*), ja(*)
       double precision t, tol, anorm, v(n), w(n), wsp(lwsp), a(*)
       external matvec
@@ -1874,7 +1876,8 @@
 *              computes: y(1:n) <- A*x(1:n)
 *                        where A is the principal matrix.
 *
-*     itrace : (input) running mode. 0=silent, 1=print step-by-step info
+*     itrace : (input) running mode. 0=silent, 1>=print happy breakdown,
+*              2>=print step-by-step info.
 *
 *     iflag  : (output) exit flag.
 *              <0 - bad input arguments 
@@ -1918,10 +1921,9 @@
 *----------------------------------------------------------------------|
 *-----The following parameters may also be adjusted herein-------------|
 *
-      integer mxstep, mxreject, ideg
+      integer mxreject, ideg
       double precision delta, gamma
-      parameter( mxstep   = 1000,
-     .           mxreject = 0,
+      parameter( mxreject = 0,
      .           ideg     = 6,
      .           delta    = 1.2d0,
      .           gamma    = 0.9d0 )
@@ -2046,7 +2048,9 @@
          hj1j = DNRM2( n, wsp(j1v),1 )
 *---     if `happy breakdown' go straightforward at the end ... 
          if ( hj1j.le.break_tol ) then
-            print*,'happy breakdown: mbrkdwn =',j,' h =',hj1j
+            if ( itrace.ge.1 ) then
+               print*,'happy breakdown: mbrkdwn =',j,' h =',hj1j
+            endif           
             k1 = 0
             ibrkflag = 1
             mbrkdwn = j
@@ -2122,7 +2126,7 @@
          t_step = gamma * t_step * (t_step*tol/err_loc)**xm
          p1 = 10.0d0**(NINT( LOG10( t_step )-SQR1 )-1)
          t_step = AINT( t_step/p1 + 0.55d0 ) * p1
-         if ( itrace.ne.0 ) then
+         if ( itrace.ge.2 ) then
             print*,'t_step =',t_old
             print*,'err_loc =',err_loc
             print*,'err_required =',delta*t_old*tol
@@ -2161,7 +2165,7 @@
 *
 *---  display and keep some information ...
 *
-      if ( itrace.ne.0 ) then
+      if ( itrace.ge.2 ) then
          print*,'integration',nstep,'---------------------------------'
          print*,'scale-square =',ns
          print*,'step_size =',t_step
@@ -2200,11 +2204,11 @@
       END
 *----------------------------------------------------------------------|
 *----------------------------------------------------------------------|
-      subroutine DSEXPV(  a, ia, ja, n, nz, m, t, v, w, tol, anorm,
+      subroutine DSEXPV( a, ia, ja, n, nz, m, t, v, w, tol,mxstep,anorm,
      .                   wsp,lwsp, iwsp,liwsp, matvec, itrace,iflag )
 
       implicit none
-      integer n, nz, m, lwsp, liwsp, itrace, iflag, iwsp(liwsp), 
+      integer n, nz, m, lwsp, liwsp, itrace, iflag, iwsp(liwsp), mxstep,
      .     ia(*), ja(*)
       double precision t, tol, anorm, v(n), w(n), wsp(lwsp), a(*)
       external matvec
@@ -2263,7 +2267,8 @@
 *              computes: y(1:n) <- A*x(1:n)
 *                        where A is the principal matrix.
 *
-*     itrace : (input) running mode. 0=silent, 1=print step-by-step info
+*     itrace : (input) running mode. 0=silent, 1>=print happy breakdown,
+*              2>=print step-by-step info.
 *
 *     iflag  : (output) exit flag.
 *              <0 - bad input arguments 
@@ -2308,10 +2313,9 @@
 *----------------------------------------------------------------------|
 *-----The following parameters may also be adjusted herein-------------|
 *
-      integer mxstep, mxreject, ideg
+      integer mxreject, ideg
       double precision delta, gamma
-      parameter( mxstep   = 500,
-     .           mxreject = 0,
+      parameter( mxreject = 0,
      .           ideg     = 6,
      .           delta    = 1.2d0,
      .           gamma    = 0.9d0 )
@@ -2436,7 +2440,9 @@
          wsp(ih+(j-1)*(mh+1)) = hjj
 *---     if `happy breakdown' go straightforward at the end ... 
          if ( hj1j.le.break_tol ) then
-            print*,'happy breakdown: mbrkdwn =',j,' h =',hj1j
+            if ( itrace.ge.1 ) then
+               print*,'happy breakdown: mbrkdwn =',j,' h =',hj1j
+            endif           
             k1 = 0
             ibrkflag = 1
             mbrkdwn = j
@@ -2512,7 +2518,7 @@
          t_step = gamma * t_step * (t_step*tol/err_loc)**xm
          p1 = 10.0d0**(NINT( LOG10( t_step )-SQR1 )-1)
          t_step = AINT( t_step/p1 + 0.55d0 ) * p1
-         if ( itrace.ne.0 ) then
+         if ( itrace.ge.2 ) then
             print*,'t_step =',t_old
             print*,'err_loc =',err_loc
             print*,'err_required =',delta*t_old*tol
@@ -2551,7 +2557,7 @@
 *
 *---  display and keep some information ...
 *
-      if ( itrace.ne.0 ) then
+      if ( itrace.ge.2 ) then
          print*,'integration',nstep,'---------------------------------'
          print*,'scale-square =',ns
          print*,'step_size =',t_step
@@ -2591,11 +2597,11 @@
 *----------------------------------------------------------------------|
 
 *----------------------------------------------------------------------|
-      subroutine ZGEXPV( a, ia, ja, n, nz, m, t, v, w, tol, anorm,
+      subroutine ZGEXPV( a, ia, ja, n, nz, m, t, v, w, tol,mxstep,anorm,
      .                   wsp,lwsp, iwsp,liwsp, matvec, itrace,iflag )
 
       implicit none
-      integer          n, nz, m, lwsp, liwsp, itrace, iflag, 
+      integer          n, nz, m, lwsp, liwsp, itrace, iflag, mxstep,
      .     iwsp(liwsp), ia(*), ja(*)
       double precision t, tol, anorm
       complex*16       v(n), w(n), wsp(lwsp), a(*)
@@ -2656,7 +2662,8 @@
 *              computes: y(1:n) <- A*x(1:n)
 *                        where A is the principal matrix.
 *
-*     itrace : (input) running mode. 0=silent, 1=print step-by-step info
+*     itrace : (input) running mode. 0=silent, 1>=print happy breakdown,
+*              2>=print step-by-step info.
 *
 *     iflag  : (output) exit flag.
 *              <0 - bad input arguments 
@@ -2701,10 +2708,9 @@
 *----------------------------------------------------------------------|
 *-----The following parameters may also be adjusted herein-------------|
 *
-      integer mxstep, mxreject, ideg
+      integer mxreject, ideg
       double precision delta, gamma
-      parameter( mxstep   = 500,
-     .           mxreject = 0,
+      parameter( mxreject = 0,
      .           ideg     = 6,
      .           delta    = 1.2d0,
      .           gamma    = 0.9d0 )
@@ -2833,7 +2839,9 @@
          hj1j = DZNRM2( n, wsp(j1v),1 )
 *---     if `happy breakdown' go straightforward at the end ... 
          if ( hj1j.le.break_tol ) then
-            print*,'happy breakdown: mbrkdwn =',j,' h =',hj1j
+            if ( itrace.ge.1 ) then
+               print*,'happy breakdown: mbrkdwn =',j,' h =',hj1j
+            endif           
             k1 = 0
             ibrkflag = 1
             mbrkdwn = j
@@ -2907,7 +2915,7 @@
          t_step = gamma * t_step * (t_step*tol/err_loc)**xm
          p1 = 10.0d0**(NINT( LOG10( t_step )-SQR1 )-1)
          t_step = AINT( t_step/p1 + 0.55d0 ) * p1
-         if ( itrace.ne.0 ) then
+         if ( itrace.ge.2 ) then
             print*,'t_step =',t_old
             print*,'err_loc =',err_loc
             print*,'err_required =',delta*t_old*tol
@@ -2947,7 +2955,7 @@
 *
 *---  display and keep some information ...
 *
-      if ( itrace.ne.0 ) then
+      if ( itrace.ge.2 ) then
          print*,'integration',nstep,'---------------------------------'
          print*,'scale-square =',ns
          print*,'step_size =',t_step
@@ -2986,11 +2994,11 @@
       END
 *----------------------------------------------------------------------|
 *----------------------------------------------------------------------|
-      subroutine ZHEXPV( a, ia, ja, n, nz, m, t, v, w, tol, anorm,
+      subroutine ZHEXPV( a, ia, ja, n, nz, m, t, v, w, tol,mxstep,anorm,
      .                   wsp,lwsp, iwsp,liwsp, matvec, itrace,iflag )
 
       implicit none
-      integer          n, nz, m, lwsp, liwsp, itrace, iflag, 
+      integer          n, nz, m, lwsp, liwsp, itrace, iflag, mxstep,
      .     iwsp(liwsp), ia(*), ja(*)
       double precision t, tol, anorm
       complex*16       v(n), w(n), wsp(lwsp), a(*)
@@ -3050,7 +3058,8 @@
 *              computes: y(1:n) <- A*x(1:n)
 *                        where A is the principal matrix.
 *
-*     itrace : (input) running mode. 0=silent, 1=print step-by-step info
+*     itrace : (input) running mode. 0=silent, 1>=print happy breakdown,
+*              2>=print step-by-step info.
 *
 *     iflag  : (output) exit flag.
 *              <0 - bad input arguments 
@@ -3095,10 +3104,9 @@
 *----------------------------------------------------------------------|
 *-----The following parameters may also be adjusted herein-------------|
 *
-      integer mxstep, mxreject, ideg
+      integer mxreject, ideg
       double precision delta, gamma
-      parameter( mxstep   = 500,
-     .           mxreject = 0,
+      parameter( mxreject = 0,
      .           ideg     = 6,
      .           delta    = 1.2d0,
      .           gamma    = 0.9d0 )
@@ -3228,7 +3236,9 @@
          wsp(ih+(j-1)*(mh+1)) = hjj
 *---     if `happy breakdown' go straightforward at the end ...
          if ( hj1j.le.break_tol ) then
-            print*,'happy breakdown: mbrkdwn =',j,' h =',hj1j
+            if ( itrace.ge.1 ) then
+               print*,'happy breakdown: mbrkdwn =',j,' h =',hj1j
+            endif           
             k1 = 0
             ibrkflag = 1
             mbrkdwn = j
@@ -3305,7 +3315,7 @@
          t_step = gamma * t_step * (t_step*tol/err_loc)**xm
          p1 = 10.0d0**(NINT( LOG10( t_step )-SQR1 )-1)
          t_step = AINT( t_step/p1 + 0.55d0 ) * p1
-         if ( itrace.ne.0 ) then
+         if ( itrace.ge.2 ) then
             print*,'t_step =',t_old
             print*,'err_loc =',err_loc
             print*,'err_required =',delta*t_old*tol
@@ -3345,7 +3355,7 @@
 *
 *---  display and keep some information ...
 *
-      if ( itrace.ne.0 ) then
+      if ( itrace.ge.2 ) then
          print*,'integration',nstep,'---------------------------------'
          print*,'scale-square =',ns
          print*,'step_size =',t_step
@@ -3384,11 +3394,11 @@
       END
 *----------------------------------------------------------------------|
 *----------------------------------------------------------------------|
-      subroutine DGPHIV( a, ia, ja, n, nz, m, t, u, v, w, tol, anorm,
-     .                   wsp,lwsp, iwsp,liwsp, matvec, itrace,iflag ) 
+      subroutine DGPHIV( a, ia, ja, n, nz, m, t, u, v, w, tol,mxstep,
+     .     anorm, wsp,lwsp, iwsp,liwsp, matvec, itrace,iflag ) 
 
       implicit none
-      integer n, nz, m, lwsp, liwsp, itrace, iflag, iwsp(liwsp),
+      integer n, nz, m, lwsp, liwsp, itrace, iflag, iwsp(liwsp), mxstep,
      .     ia(*), ja(*)
       double precision t, tol, anorm, u(n), v(n), w(n), wsp(lwsp), a(*)
       external matvec
@@ -3448,7 +3458,8 @@
 *              computes: y(1:n) <- A*x(1:n)
 *                        where A is the principal matrix.
 *
-*     itrace : (input) running mode. 0=silent, 1=print step-by-step info
+*     itrace : (input) running mode. 0=silent, 1>=print happy breakdown,
+*              2>=print step-by-step info.
 *
 *     iflag  : (output) exit flag.
 *              <0 - bad input arguments 
@@ -3483,10 +3494,9 @@
 *----------------------------------------------------------------------|
 *-----The following parameters may also be adjusted herein-------------|
 *
-      integer mxstep, mxreject, ideg
+      integer mxreject, ideg
       double precision delta, gamma
-      parameter( mxstep   = 1000, 
-     .           mxreject = 0,
+      parameter( mxreject = 0,
      .           ideg     = 6, 
      .           delta    = 1.2d0,
      .           gamma    = 0.9d0 )
@@ -3610,7 +3620,9 @@
          hj1j = DNRM2( n, wsp(j1v),1 )
 *---     if `happy breakdown' go straightforward at the end ... 
          if ( hj1j.le.break_tol ) then
-            print*,'happy breakdown: mbrkdwn =',j,' h =',hj1j
+            if ( itrace.ge.1 ) then
+               print*,'happy breakdown: mbrkdwn =',j,' h =',hj1j
+            endif           
             k1 = 0
             ibrkflag = 1
             mbrkdwn = j
@@ -3679,7 +3691,7 @@
          t_step = gamma * t_step * (t_step*tol/err_loc)**xm
          p1 = 10.0d0**(NINT( LOG10( t_step )-SQR1 )-1)
          t_step = AINT( t_step/p1 + 0.55d0 ) * p1
-         if ( itrace.ne.0 ) then
+         if ( itrace.ge.2 ) then
             print*,'t_step =',t_old
             print*,'err_loc =',err_loc
             print*,'err_required =',delta*t_old*tol
@@ -3714,7 +3726,7 @@
 *
 *---  display and keep some information ...
 *
-      if ( itrace.ne.0 ) then
+      if ( itrace.ge.2 ) then
          print*,'integration',nstep,'---------------------------------'
          print*,'scale-square =',ns
          print*,'step_size =',t_step
@@ -3751,11 +3763,11 @@
       END
 *----------------------------------------------------------------------|
 *----------------------------------------------------------------------|
-      subroutine DSPHIV( a, ia, ja, n, nz, m, t, u, v, w, tol, anorm,
-     .                   wsp,lwsp, iwsp,liwsp, matvec, itrace,iflag ) 
+      subroutine DSPHIV( a, ia, ja, n, nz, m, t, u, v, w, tol,mxstep, 
+     .     anorm, wsp,lwsp, iwsp,liwsp, matvec, itrace,iflag ) 
 
       implicit none
-      integer n, nz, m, lwsp, liwsp, itrace, iflag, iwsp(liwsp), 
+      integer n, nz, m, lwsp, liwsp, itrace, iflag, iwsp(liwsp), mxstep,
      .     ia(*), ja(*)
       double precision t, tol, anorm, u(n), v(n), w(n), wsp(lwsp), a(*)
       external matvec
@@ -3815,7 +3827,8 @@
 *              computes: y(1:n) <- A*x(1:n)
 *                        where A is the principal matrix.
 *
-*     itrace : (input) running mode. 0=silent, 1=print step-by-step info
+*     itrace : (input) running mode. 0=silent, 1>=print happy breakdown,
+*              2>=print step-by-step info.
 *
 *     iflag  : (output) exit flag.
 *              <0 - bad input arguments 
@@ -3850,10 +3863,9 @@
 *----------------------------------------------------------------------|
 *-----The following parameters may also be adjusted herein-------------|
 *
-      integer mxstep, mxreject, ideg
+      integer mxreject, ideg
       double precision delta, gamma
-      parameter( mxstep   = 500, 
-     .           mxreject = 0,
+      parameter( mxreject = 0,
      .           ideg     = 6, 
      .           delta    = 1.2d0,
      .           gamma    = 0.9d0 )
@@ -3977,7 +3989,9 @@
          wsp(ih+(j-1)*(mh+1)) = hjj
 *---     if `happy breakdown' go straightforward at the end ... 
          if ( hj1j.le.break_tol ) then
-            print*,'happy breakdown: mbrkdwn =',j,' h =',hj1j
+            if ( itrace.ge.1 ) then
+               print*,'happy breakdown: mbrkdwn =',j,' h =',hj1j
+            endif           
             k1 = 0
             ibrkflag = 1
             mbrkdwn = j
@@ -4052,7 +4066,7 @@
          t_step = gamma * t_step * (t_step*tol/err_loc)**xm
          p1 = 10.0d0**(NINT( LOG10( t_step )-SQR1 )-1)
          t_step = AINT( t_step/p1 + 0.55d0 ) * p1
-         if ( itrace.ne.0 ) then
+         if ( itrace.ge.2 ) then
             print*,'t_step =',t_old
             print*,'err_loc =',err_loc
             print*,'err_required =',delta*t_old*tol
@@ -4087,7 +4101,7 @@
 *
 *---  display and keep some information ...
 *
-      if ( itrace.ne.0 ) then
+      if ( itrace.ge.2 ) then
          print*,'integration',nstep,'---------------------------------'
          print*,'scale-square =',ns
          print*,'step_size =',t_step
@@ -4124,11 +4138,11 @@
       END
 *----------------------------------------------------------------------|
 *----------------------------------------------------------------------|
-      subroutine ZGPHIV( a, ia, ja, n, nz, m, t, u, v, w, tol, anorm,
-     .                   wsp,lwsp, iwsp,liwsp, matvec, itrace,iflag )
+      subroutine ZGPHIV( a, ia, ja, n, nz, m, t, u, v, w, tol,mxstep,
+     .     anorm, wsp,lwsp, iwsp,liwsp, matvec, itrace,iflag )
 
       implicit none
-      integer          n, nz, m, lwsp, liwsp, itrace, iflag, 
+      integer          n, nz, m, lwsp, liwsp, itrace, iflag, mxstep,
      .     iwsp(liwsp), ia(*), ja(*)
       double precision t, tol, anorm
       complex*16       u(n), v(n), w(n), wsp(lwsp), a(*)
@@ -4190,7 +4204,8 @@
 *              computes: y(1:n) <- A*x(1:n)
 *                        where A is the principal matrix.
 *
-*     itrace : (input) running mode. 0=silent, 1=print step-by-step info
+*     itrace : (input) running mode. 0=silent, 1>=print happy breakdown,
+*              2>=print step-by-step info.
 *
 *     iflag  : (output) exit flag.
 *              <0 - bad input arguments
@@ -4225,10 +4240,9 @@
 *----------------------------------------------------------------------|
 *-----The following parameters may also be adjusted herein-------------|
 *
-      integer mxstep, mxreject, ideg
+      integer mxreject, ideg
       double precision delta, gamma
-      parameter( mxstep   = 500, 
-     .           mxreject = 0,
+      parameter( mxreject = 0,
      .           ideg     = 6, 
      .           delta    = 1.2d0,
      .           gamma    = 0.9d0 )
@@ -4356,7 +4370,9 @@
          hj1j = DZNRM2( n, wsp(j1v),1 )
 *---     if `happy breakdown' go straightforward at the end ... 
          if ( hj1j.le.break_tol ) then
-            print*,'happy breakdown: mbrkdwn =',j,' h =',hj1j
+            if ( itrace.ge.1 ) then
+               print*,'happy breakdown: mbrkdwn =',j,' h =',hj1j
+            endif           
             k1 = 0
             ibrkflag = 1
             mbrkdwn = j
@@ -4429,7 +4445,7 @@
          t_step = gamma * t_step * (t_step*tol/err_loc)**xm
          p1 = 10.0d0**(NINT( LOG10( t_step )-SQR1 )-1)
          t_step = AINT( t_step/p1 + 0.55d0 ) * p1
-         if ( itrace.ne.0 ) then
+         if ( itrace.ge.2 ) then
             print*,'t_step =',t_old
             print*,'err_loc =',err_loc
             print*,'err_required =',delta*t_old*tol
@@ -4465,7 +4481,7 @@
 *
 *---  display and keep some information ...
 *
-      if ( itrace.ne.0 ) then
+      if ( itrace.ge.2 ) then
          print*,'integration',nstep,'---------------------------------'
          print*,'scale-square =',ns
          print*,'step_size =',t_step
@@ -4502,11 +4518,11 @@
       END
 *----------------------------------------------------------------------|
 *----------------------------------------------------------------------|
-      subroutine ZHPHIV( a, ia, ja, n, nz, m, t, u, v, w, tol, anorm,
-     .                   wsp,lwsp, iwsp,liwsp, matvec, itrace,iflag )
+      subroutine ZHPHIV( a, ia, ja, n, nz, m, t, u, v, w, tol,mxstep, 
+     .     anorm, wsp,lwsp, iwsp,liwsp, matvec, itrace,iflag )
 
       implicit none
-      integer          n, nz, m, lwsp, liwsp, itrace, iflag, 
+      integer          n, nz, m, lwsp, liwsp, itrace, iflag, mxstep,
      .     iwsp(liwsp), ia(*), ja(*)
       double precision t, tol, anorm
       complex*16       u(n), v(n), w(n), wsp(lwsp), a(*)
@@ -4567,7 +4583,8 @@
 *              computes: y(1:n) <- A*x(1:n)
 *                        where A is the principal matrix.
 *
-*     itrace : (input) running mode. 0=silent, 1=print step-by-step info
+*     itrace : (input) running mode. 0=silent, 1>=print happy breakdown,
+*              2>=print step-by-step info.
 *
 *     iflag  : (output) exit flag.
 *              <0 - bad input arguments 
@@ -4602,10 +4619,9 @@
 *----------------------------------------------------------------------|
 *-----The following parameters may also be adjusted herein-------------|
 *
-      integer mxstep, mxreject, ideg
+      integer mxreject, ideg
       double precision delta, gamma
-      parameter( mxstep   = 500, 
-     .           mxreject = 0,
+      parameter( mxreject = 0,
      .           ideg     = 6, 
      .           delta    = 1.2d0,
      .           gamma    = 0.9d0 )
@@ -4807,7 +4823,7 @@
          t_step = gamma * t_step * (t_step*tol/err_loc)**xm
          p1 = 10.0d0**(NINT( LOG10( t_step )-SQR1 )-1)
          t_step = AINT( t_step/p1 + 0.55d0 ) * p1
-         if ( itrace.ne.0 ) then
+         if ( itrace.ge.2 ) then
             print*,'t_step =',t_old
             print*,'err_loc =',err_loc
             print*,'err_required =',delta*t_old*tol
@@ -4843,7 +4859,7 @@
 *
 *---  display and keep some information ...
 *
-      if ( itrace.ne.0 ) then
+      if ( itrace.ge.2 ) then
          print*,'integration',nstep,'---------------------------------'
          print*,'scale-square =',ns
          print*,'step_size =',t_step
