@@ -70,24 +70,24 @@
 ##' \code{\link{expv}}
 ##' @author Niels Richard Hansen \email{Niels.R.Hansen@@math.ku.dk}
 ##' @examples
-##' ### A CCS 3 by 3 real matrix. The last element in 'ja' is the number of
+##' ### A CCS 4 by 4 real matrix. The last element in 'ja' is the number of
 ##' ### non-zero elements + 1. 
-##' a <- c(-1, 1, -2, -3, 1)
-##' ia <- c(1, 3, 2, 3, 1) 
-##' ja <- c(1, 3, 5, 6)
+##' a <- c(-1, 1, -2, -3, 1, 2, -1)
+##' ia <- c(1, 3, 2, 4, 1, 2, 3) 
+##' ja <- c(1, 3, 5, 6, 8)
 ##' 
-##' v <- c(1, 1, 1)
-##' wCCS <- expoRkit:::Rexpv(a, ia, ja, 3, v = v)
+##' v <- c(1, 1, 1, 1)
+##' wCCS <- expoRkit:::Rexpv(a, ia, ja, 4, v = v)
 ##' 
 ##' ### COO storage instead.
-##' ja <- c(1, 1, 2, 2, 3)  
-##' wCOO <- expoRkit:::Rexpv(a, ia, ja, 3, v = v, storage = 'COO')
+##' ja <- c(1, 1, 2, 2, 3, 4, 4)  
+##' wCOO <- expoRkit:::Rexpv(a, ia, ja, 4, v = v, storage = 'COO')
 ##' 
 ##' ### CRS storage instead.
-##' a <- c(-1, 1, -2, 1, -3)
-##' ja <- c(1, 3, 2, 1, 2)
-##' ia <- c(1, 3, 4, 6)
-##' wCRS <- expoRkit:::Rexpv(a, ia, ja, 3, v = v, storage = 'CRS')
+##' a <- c(-1, 1, -2, 2, 1, -1, -3)
+##' ja <- c(1, 3, 2, 4, 1, 4, 2)
+##' ia <- c(1, 3, 5, 7, 8)
+##' wCRS <- expoRkit:::Rexpv(a, ia, ja, 4, v = v, storage = 'CRS')
 ##' 
 ##' cbind(wCCS, wCOO, wCRS)
 ##' 
@@ -95,38 +95,41 @@
 ##'           all.equal(wCCS, wCRS),
 ##'           all.equal(wCRS, wCOO))
 ##'
-##' ### Complex version
-##' a <- c(-1, 1i, -2i, -3, 1)
-##' ia <- c(1, 3, 2, 3, 1) 
-##' ja <- c(1, 3, 5, 6)
+##' ## Complex version
+##' a <- c(-1, 1i, -2, -3i, 1, 2i, -1)
+##' ia <- c(1, 3, 2, 4, 1, 2, 3) 
+##' ja <- c(1, 3, 5, 6, 8)
 ##' 
-##' v <- c(1, 1, 1)
-##' wCCS <- expoRkit:::Rexpv(a, ia, ja, 3, v = v)
+##' v <- c(1, 1, 1, 1)
+##' wCCS <- expoRkit:::Rexpv(a, ia, ja, 4, v = v)
 ##' 
 ##' ### COO storage instead.
-##' ja <- c(1, 1, 2, 2, 3)  
-##' wCOO <- expoRkit:::Rexpv(a, ia, ja, 3, v = v, storage = 'COO')
+##' ja <- c(1, 1, 2, 2, 3, 4, 4)  
+##' wCOO <- expoRkit:::Rexpv(a, ia, ja, 4, v = v, storage = 'COO')
 ##' 
 ##' ### CRS storage instead.
-##' a <- c(-1, 1, -2i, 1i, -3)
-##' ja <- c(1, 3, 2, 1, 2)
-##' ia <- c(1, 3, 4, 6)
-##' wCRS <- expoRkit:::Rexpv(a, ia, ja, 3, v = v, storage = 'CRS')
+##' a <- c(-1, 1, -2, 2i, 1i, -1, -3i)
+##' ja <- c(1, 3, 2, 4, 1, 4, 2)
+##' ia <- c(1, 3, 5, 7, 8)
+##' wCRS <- expoRkit:::Rexpv(a, ia, ja, 4, v = v, storage = 'CRS')
 ##' 
 ##' cbind(wCCS, wCOO, wCRS)
 ##' 
 ##' stopifnot(all.equal(wCCS, wCOO),
 ##'           all.equal(wCCS, wCRS),
 ##'           all.equal(wCRS, wCOO))
+##'
 ##' @useDynLib expoRkit
 Rexpv <- function(a, ia, ja, n, v, t = 1.0, storage = 'CCS', u = NULL,
                   anorm = max(abs(a)), Markov = FALSE, m = 30L, tol =
                   0.0, itrace = 0L, mxstep = 10000L) {
+  if (n <= 2)
+    stop("The matrix dimension, argument 'n', must be at least 3.")
   m <- as.integer(min(m, n-1))
   ## A memory bug results in a bus error when 'gc' is called
   ## afterwards in R. The bug apparently only shows up in __EXPV when
   ## m <= 2, but it has not been traced down. 
-  if (m <= 2)  
+  if (m <= 2 & is.null(u))  
     u <- rep(0, n) ## Forces the use of __PHIV.
   sflag <- switch(storage,
                   "CCS" = 1,
