@@ -77,12 +77,13 @@
 ##' @seealso \code{\link{Rexpv}}, \code{\link[Matrix]{expm}},
 ##' \code{\link[expm]{expm}}
 ##' @examples
-##' ### Small 3 by 3 example.
-##' x <- matrix(c(-1, 0, 1,
-##'               0, -2, -3,
-##'               1, 0, 0),
-##'             3, 3)
-##' v <- c(1, 1, 1)
+##' ### Small 4 by 4 example.
+##' x <- matrix(c(-1, 0, 1, 0,
+##'               0, -2, 0, -3,
+##'               1, 0, 0, 0,
+##'               0, 2, -1, 0),
+##'             4, 4)
+##' v <- c(1, 1, 1, 1)
 ##' 
 ##' require(Matrix)
 ##' require(SparseM)
@@ -101,9 +102,9 @@
 ##'           all.equal(w[, 1], w[, 5]),
 ##'           all.equal(w[, 1], w[, 6]))
 ##' 
-##' u <- c(2, 0, 1)
+##' u <- c(2, 0, 1, 1)
 ##' ex <- padm(x)
-##' w <- cbind(ex %*% v + (ex - diag(1, 3)) %*% solve(x, u),
+##' w <- cbind(ex %*% v + (ex - diag(1, 4)) %*% solve(x, u),
 ##'            expv(x, v, u = u),
 ##'            expv(Matrix(x, sparse = TRUE), v, u = u),
 ##'            expv(as.matrix.coo(x), v, u = u),
@@ -142,7 +143,8 @@
 ##' time <- seq(0, 10, 0.2)
 ##' Pt <- expv(Q, p0, t = time, Markov = TRUE)
 ##' 
-##' \dontrun{matplot(1:n, Pt, type = "l")
+##' \dontrun{
+##' matplot(1:n, Pt, type = "l")
 ##' image(time, 0:(n-1), -t(Pt), col = terrain.colors(100))
 ##' }
 ##' @export
@@ -156,6 +158,7 @@ setGeneric("expv", function(x, v, t = 1.0, u = NULL,
 
 ##' @rdname expv-methods
 ##' @aliases expv,matrix,vector-method
+##' @importFrom Matrix Matrix
 setMethod("expv", signature("matrix", "vector"),
           function(x, v, t = 1.0, u = NULL,
                    Markov = FALSE, transpose = Markov, ...) {

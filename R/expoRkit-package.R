@@ -25,4 +25,4 @@
 ##' @author Niels Richard Hansen \email{Niels.R.Hansen@@math.ku.dk}
 ##' @keywords package 
 ##' @docType package
-c()
+NULL
