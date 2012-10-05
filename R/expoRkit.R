@@ -121,8 +121,13 @@
 ##' @useDynLib expoRkit
 Rexpv <- function(a, ia, ja, n, v, t = 1.0, storage = 'CCS', u = NULL,
                   anorm = max(abs(a)), Markov = FALSE, m = 30L, tol =
-                  0, itrace = 0L, mxstep = 10000L) {
+                  0.0, itrace = 0L, mxstep = 10000L) {
   m <- as.integer(min(m, n-1))
+  ## A memory bug results in a bus error when 'gc' is called
+  ## afterwards in R. The bug apparently only shows up in __EXPV when
+  ## m <= 2, but it has not been traced down. 
+  if (m <= 2)  
+    u <- rep(0, n) ## Forces the use of __PHIV.
   sflag <- switch(storage,
                   "CCS" = 1,
                   "CRS" = 2,
