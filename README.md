@@ -1,12 +1,25 @@
 # ExpoRkit 
 
-R-interface to the Fortran package Expokit for matrix exponentiation
+An R-interface to the Fortran package Expokit for matrix exponentiation
 and a little more. 
 
-## Installation
+## Installation from CRAN
 
-Installation can be done from the source in this repository using the
-`devtools` package.
+Version 0.9 is available from CRAN. It can be installed from R.
+
+    :::R
+	install.packages(expoRkit)
+	
+Then load the package and check out a help file.
+
+	:::R
+	library(expoRkit)
+	?expv
+	
+## Installation of the development version from source
+
+The current development version can be installed from the source in this
+repository using the `devtools` package.
 
 	:::R
 	install.packages("devtools")  ## if 'devtools' not installed

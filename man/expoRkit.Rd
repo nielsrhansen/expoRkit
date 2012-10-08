@@ -9,7 +9,7 @@
 }
 \details{
   \tabular{ll}{ Package: \tab expoRkit \cr Type: \tab
-  Package \cr Version: \tab 0.9 \cr Date: \tab
+  Package \cr Version: \tab 0.9.1 \cr Date: \tab
   2012-10-08\cr License: \tab GPL (>= 2)\cr LazyLoad: \tab
   yes \cr }
 
@@ -20,9 +20,16 @@
   linear ordinary first order differential equations. This
   package provides an R-interface to some of the Fortran
   subroutines from Expokit.
+
+  The Fortran package was developed by Roger B. Sidje, see
+  \url{http://www.maths.uq.edu.au/expokit/}. Niels Richard
+  Hansen adapted the package for use with R and wrote the R
+  interface. Permission to distribute the Expokit source
+  under GPL was obtained from Roger B. Sidje.
 }
 \author{
-  Niels Richard Hansen \email{Niels.R.Hansen@math.ku.dk}
+  Roger B. Sidje \email{roger.b.sidje@ua.edu}, Niels
+  Richard Hansen \email{Niels.R.Hansen@math.ku.dk}.
 }
 \references{
   Sidje, R. B. (1998) Expokit. Software Package for
