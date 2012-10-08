@@ -165,6 +165,7 @@ j <- c(i[-n], i, i[-1])
 i <- c(i[-1], i, i[-n])
 
 ## Sparse rate matrix constructed without dense intermediate
+require(Matrix)
 Q <- sparseMatrix(i = i, j = j, x = rates, dims = c(n, n))
 
 ## Evolution of uniform initial distribution
