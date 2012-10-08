@@ -1,6 +1,6 @@
 \docType{data}
-\name{ORANI678}
-\alias{ORANI678}
+\name{orani}
+\alias{orani}
 \title{Australia Economic Model data, 1968-68.}
 \description{
   This sparse matrix of order 2,529 and with 90,158
