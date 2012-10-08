@@ -4,7 +4,7 @@
 ##' elements was used in Sidje (1998) to illustrate the application of
 ##' Expokit.
 ##' 
-##' @name ORANI678
+##' @name orani
 ##' @docType data
 ##' @keywords data
 ##' @references Sidje, R. B. (1998) Expokit. Software Package for Computing Matrix
