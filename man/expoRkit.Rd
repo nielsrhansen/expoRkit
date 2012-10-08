@@ -9,8 +9,8 @@
 }
 \details{
   \tabular{ll}{ Package: \tab expoRkit \cr Type: \tab
-  Package \cr Version: \tab 0.5 \cr Date: \tab
-  2012-10-02\cr License: \tab GPL (>= 2)\cr LazyLoad: \tab
+  Package \cr Version: \tab 0.9 \cr Date: \tab
+  2012-10-08\cr License: \tab GPL (>= 2)\cr LazyLoad: \tab
   yes \cr }
 
   Expokit is an efficient Fortran implementation for

@@ -1,8 +1,8 @@
 Package: expoRkit
 Type: Package
 Title: Expokit in R
-Version: 0.5
-Date: 2012-10-02
+Version: 0.9
+Date: 2012-10-08
 Author: Niels Richard Hansen <Niels.R.Hansen@math.ku.dk>.
 Maintainer: Niels Richard Hansen <Niels.R.Hansen@math.ku.dk>
 Depends:
