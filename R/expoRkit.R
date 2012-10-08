@@ -123,14 +123,9 @@
 Rexpv <- function(a, ia, ja, n, v, t = 1.0, storage = 'CCS', u = NULL,
                   anorm = max(abs(a)), Markov = FALSE, m = 30L, tol =
                   0.0, itrace = 0L, mxstep = 10000L) {
-  if (n <= 2)
-    stop("The matrix dimension, argument 'n', must be at least 3.")
+  if (n <= 1)
+    stop("The matrix dimension, argument 'n', cannot be 1.")
   m <- as.integer(min(m, n-1))
-  ## A memory bug results in a bus error when 'gc' is called
-  ## afterwards in R. The bug apparently only shows up in __EXPV when
-  ## m <= 2, but it has not been traced down. 
-  if (m <= 2 & is.null(u))  
-    u <- rep(0, n) ## Forces the use of __PHIV.
   sflag <- switch(storage,
                   "CCS" = 1,
                   "CRS" = 2,
