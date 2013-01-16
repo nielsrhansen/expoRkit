@@ -17,8 +17,9 @@
 ##' ### Solving a system of 2529 coupled linear differential equations
 ##' system.time(wCCS <- expv(orani, v = v, t = 10))
 ##' oraniCOO <- as(orani, "TsparseMatrix")  ## Coerce to COO format
-##' ### In this case, the COO format gives a slight increase in
-##' ### computational time as reported in Sidje (1998).
+##' ### Sidje (1998) reports that the COO format gives a slight increase
+##' ### in computational time. Wether this is the case seems to be 
+##' ### machine dependent.
 ##' system.time(wCOO <- expv(oraniCOO, v = v, t = 10))
 ##' 
 ##' print(cbind(wCCS[1:5], wCOO[1:5]), digits = 14)
