@@ -1,36 +1,14 @@
+\docType{methods}
 \name{expv}
 \alias{expv}
 \alias{expv,CsparseMatrix,vector-method}
-\alias{expv,TsparseMatrix,vector-method}
 \alias{expv,dgCMatrix,vector-method}
 \alias{expv,matrix,vector-method}
 \alias{expv,matrix.coo,vector-method}
 \alias{expv,matrix.csc,vector-method}
 \alias{expv,matrix.csr,vector-method}
-\alias{expv-methods}
+\alias{expv,TsparseMatrix,vector-method}
 \title{Matrix exponentiation and more.}
-\usage{
-  \S4method{expv}{matrix,vector}(x, v, t = 1, u = NULL,
-    Markov = FALSE, transpose = Markov, ...)
-
-  \S4method{expv}{CsparseMatrix,vector}(x, v, t = 1,
-    u = NULL, Markov = FALSE, transpose = Markov, ...)
-
-  \S4method{expv}{dgCMatrix,vector}(x, v, t = 1, u = NULL,
-    Markov = FALSE, transpose = Markov, ...)
-
-  \S4method{expv}{TsparseMatrix,vector}(x, v, t = 1,
-    u = NULL, Markov = FALSE, transpose = Markov, ...)
-
-  \S4method{expv}{matrix.csc,vector}(x, v, t = 1, u = NULL,
-    Markov = FALSE, transpose = Markov, ...)
-
-  \S4method{expv}{matrix.csr,vector}(x, v, t = 1, u = NULL,
-    Markov = FALSE, transpose = Markov, ...)
-
-  \S4method{expv}{matrix.coo,vector}(x, v, t = 1, u = NULL,
-    Markov = FALSE, transpose = Markov, ...)
-}
 \arguments{
   \item{x}{a matrix.}
 
