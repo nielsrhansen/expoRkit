@@ -64,7 +64,7 @@
 ##' solution is computed.
 ##' @param u a \code{numeric} vector. Default \code{NULL}.
 ##' @param Markov \code{logical}. If \code{TRUE} the matrix is taken
-##' to be an rate matrix and steps are taken to ensure that the
+##' to be a rate matrix and steps are taken to ensure that the
 ##' computed result is a probability vector. Default \code{FALSE}.
 ##' @param transpose \code{logical}. If \code{TRUE} transpose the
 ##' matrix before the solution is computed. Default equals

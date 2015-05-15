@@ -60,66 +60,72 @@
 *               0 - no problem
 *               1 - maximum number of steps reached without convergence
 *               2 - requested tolerance was too high
+*               3 - null H encountered in pade approximation
 *
 *     sflag  :  (input) storage flag. Selects the matrix-vector routine.
 *               1 - Compressed Column Storage (CCS)
 *               2 - Compressed Row Storage (CRS)
 *               3 - COOrdinates storage format
+*
+*     delta   : local truncation error `safety factor'
+*
+*     gamma   : stepsize `shrinking factor'
+*
 
       subroutine R_DGEXPV( a, ia, ja, n, nz, m, t, v, w, tol,mxstep,
-     .     anorm, itrace,iflag,sflag )
+     .     anorm, itrace,iflag,sflag, delta,gamma )
       implicit none
       integer n, nz, ia(*), ja(*), m, lwsp, iflag, iwsp(m+6), mxstep,
      .     itrace, sflag
       double precision a(*), t, tol, anorm, v(n), w(n),
-     .     wsp( n*(m+2)+5*(m+2)*(m+2)+6+1 )
+     .     wsp( n*(m+2)+5*(m+2)*(m+2)+6+1 ), delta, gamma
       external dgcoov, dgccsv, dgcrsv
 
       lwsp = n*(m+2)+5*(m+2)*(m+2)+6+1 
       if ( sflag.eq.1) then
          call DGEXPV( a, ia, ja, n, nz, m, t, v, w, tol,mxstep,anorm,
-     .        wsp,lwsp, iwsp,m+6, dgccsv, itrace,iflag )
+     .        wsp,lwsp, iwsp,m+6, dgccsv, delta,gamma, itrace,iflag )
       endif
       if ( sflag.eq.2) then
          call DGEXPV( a, ia, ja, n, nz, m, t, v, w, tol,mxstep,anorm,
-     .        wsp,lwsp, iwsp,m+6, dgcrsv, itrace,iflag )
+     .        wsp,lwsp, iwsp,m+6, dgcrsv, delta,gamma, itrace,iflag )
       endif
       if ( sflag.eq.3) then
          call DGEXPV( a, ia, ja, n, nz, m, t, v, w, tol,mxstep,anorm,
-     .        wsp,lwsp, iwsp,m+6, dgcoov, itrace,iflag )
+     .        wsp,lwsp, iwsp,m+6, dgcoov, delta,gamma, itrace,iflag )
       endif
       END
 
       subroutine R_DMEXPV( a, ia, ja, n, nz, m, t, v, w, tol,mxstep,
-     .     anorm, itrace,iflag,sflag )
+     .     anorm, itrace,iflag,sflag, delta,gamma )
       implicit none
       integer n, nz, ia(*), ja(*), m, lwsp, iflag, iwsp(m+6), mxstep,
      .     itrace, sflag
       double precision a(*), t, tol, anorm, v(n), w(n),
-     .     wsp( n*(m+2)+5*(m+2)*(m+2)+6+1  )
+     .     wsp( n*(m+2)+5*(m+2)*(m+2)+6+1  ), delta, gamma
       external dgcoov, dgccsv, dgcrsv
       
       lwsp = n*(m+2)+5*(m+2)*(m+2)+6+1 
       if ( sflag.eq.1) then
          call DMEXPV( a, ia, ja, n, nz, m, t, v, w, tol,mxstep,anorm,
-     .        wsp,lwsp, iwsp,m+6, dgccsv, itrace,iflag )
+     .        wsp,lwsp, iwsp,m+6, dgccsv, delta,gamma, itrace,iflag )
       endif
       if ( sflag.eq.2) then
          call DMEXPV( a, ia, ja, n, nz, m, t, v, w, tol,mxstep,anorm,
-     .        wsp,lwsp, iwsp,m+6, dgcrsv, itrace,iflag )
+     .        wsp,lwsp, iwsp,m+6, dgcrsv, delta,gamma, itrace,iflag )
       endif
       if ( sflag.eq.3) then
          call DMEXPV( a, ia, ja, n, nz, m, t, v, w, tol,mxstep,anorm,
-     .        wsp,lwsp, iwsp,m+6, dgcoov, itrace,iflag )
+     .        wsp,lwsp, iwsp,m+6, dgcoov, delta,gamma, itrace,iflag )
       endif
       END
       
       subroutine R_ZGEXPV( a, ia, ja, n, nz, m, t, v, w, tol,mxstep,
-     .     anorm, itrace,iflag,sflag )
+     .     anorm, itrace,iflag,sflag, delta,gamma )
       implicit none
       integer n, nz, ia(*), ja(*), m, lwsp, iflag, iwsp(m+6), mxstep,
      .     itrace, sflag
-      double precision t, tol, anorm
+      double precision t, tol, anorm, delta, gamma
       complex*16 a(*), v(n), w(n), 
      .     wsp( n*(m+2)+5*(m+2)*(m+2)+6+1  )
       external zgcoov, zgccsv, zgcrsv
@@ -127,48 +133,48 @@
       lwsp = n*(m+2)+5*(m+2)*(m+2)+6+1 
       if ( sflag.eq.1) then
          call ZGEXPV( a, ia, ja, n, nz, m, t, v, w, tol,mxstep,anorm,
-     .        wsp,lwsp, iwsp,m+6, zgccsv, itrace,iflag )
+     .        wsp,lwsp, iwsp,m+6, zgccsv, delta,gamma, itrace,iflag )
       endif
       if ( sflag.eq.2) then
          call ZGEXPV( a, ia, ja, n, nz, m, t, v, w, tol,mxstep,anorm,
-     .        wsp,lwsp, iwsp,m+6, zgcrsv, itrace,iflag )
+     .        wsp,lwsp, iwsp,m+6, zgcrsv, delta,gamma, itrace,iflag )
       endif
       if ( sflag.eq.3) then
          call ZGEXPV( a, ia, ja, n, nz, m, t, v, w, tol,mxstep,anorm,
-     .        wsp,lwsp, iwsp,m+6, zgcoov, itrace,iflag )
+     .        wsp,lwsp, iwsp,m+6, zgcoov, delta,gamma, itrace,iflag )
       endif
       END
 
       subroutine R_DGPHIV( a, ia, ja, n, nz, m, t, u, v, w, tol,mxstep,
-     .     anorm, itrace,iflag,sflag )
+     .     anorm, itrace,iflag,sflag, delta,gamma )
       implicit none
       integer n, nz, ia(*), ja(*), m, lwsp, iflag, iwsp(m+6), mxstep, 
      .     itrace, sflag
       double precision a(*), t, tol, anorm, u(n), v(n), w(n),
-     .     wsp(n*(m+3)+5*(m+3)*(m+3)+6+1  )
+     .     wsp(n*(m+3)+5*(m+3)*(m+3)+6+1  ), delta, gamma
       external dgcoov, dgccsv, dgcrsv
 
       lwsp = n*(m+3)+5*(m+3)*(m+3)+6+1 
       if ( sflag.eq.1) then
          call DGPHIV( a, ia, ja, n, nz, m, t, u, v, w, tol,mxstep,anorm,
-     .        wsp,lwsp, iwsp,m+6, dgccsv, itrace,iflag )
+     .        wsp,lwsp, iwsp,m+6, dgccsv, delta,gamma, itrace,iflag )
       endif
       if ( sflag.eq.2) then
          call DGPHIV( a, ia, ja, n, nz, m, t, u, v, w, tol,mxstep,anorm,
-     .        wsp,lwsp, iwsp,m+6, dgcrsv, itrace,iflag )
+     .        wsp,lwsp, iwsp,m+6, dgcrsv, delta,gamma, itrace,iflag )
       endif
       if ( sflag.eq.3) then
          call DGPHIV( a, ia, ja, n, nz, m, t, u, v, w, tol,mxstep,anorm,
-     .        wsp,lwsp, iwsp,m+6, dgcoov, itrace,iflag )
+     .        wsp,lwsp, iwsp,m+6, dgcoov, delta,gamma, itrace,iflag )
       endif
       END
 
       subroutine R_ZGPHIV( a, ia, ja, n, nz, m, t, u, v, w, tol,mxstep,
-     .     anorm, itrace,iflag,sflag )
+     .     anorm, itrace,iflag,sflag, delta,gamma )
       implicit none
       integer n, nz, ia(*), ja(*), m, lwsp, iflag, iwsp(m+6), mxstep,
      .     itrace, sflag
-      double precision t, tol, anorm
+      double precision t, tol, anorm, delta, gamma
       complex*16 a(*), u(n), v(n), w(n),
      .     wsp( n*(m+3)+5*(m+3)*(m+3)+6+1 )
       external zgcoov, zgccsv, zgcrsv
@@ -176,14 +182,14 @@
       lwsp = n*(m+3)+5*(m+3)*(m+3)+6+1 
       if ( sflag.eq.1) then
          call ZGPHIV( a, ia, ja, n, nz, m, t, u, v, w, tol,mxstep,anorm,
-     .        wsp,lwsp, iwsp,m+6, zgccsv, itrace,iflag )
+     .        wsp,lwsp, iwsp,m+6, zgccsv, delta,gamma, itrace,iflag )
       endif
       if ( sflag.eq.2) then
          call ZGPHIV( a, ia, ja, n, nz, m, t, u, v, w, tol,mxstep,anorm,
-     .        wsp,lwsp, iwsp,m+6, zgcrsv, itrace,iflag )
+     .        wsp,lwsp, iwsp,m+6, zgcrsv, delta,gamma, itrace,iflag )
       endif
       if ( sflag.eq.3) then
          call ZGPHIV( a, ia, ja, n, nz, m, t, u, v, w, tol,mxstep,anorm,
-     .        wsp,lwsp, iwsp,m+6, zgcoov, itrace,iflag )
+     .        wsp,lwsp, iwsp,m+6, zgcoov, delta,gamma, itrace,iflag )
       endif
       END

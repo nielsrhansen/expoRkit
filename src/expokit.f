@@ -179,12 +179,14 @@
 
 *----------------------------------------------------------------------|
       subroutine DMEXPV( a, ia, ja, n, nz, m, t, v, w, tol,mxstep, 
-     .     anorm, wsp,lwsp, iwsp,liwsp, matvec, itrace,iflag )
+     .     anorm, wsp,lwsp, iwsp,liwsp, matvec, delta,gamma,
+     .     itrace,iflag )
 
       implicit none
       integer n, m, lwsp, liwsp, itrace, iflag, iwsp(liwsp), mxstep,
      .     nz, ia(*), ja(*)
-      double precision t, tol, anorm, v(n), w(n), wsp(lwsp), a(*)
+      double precision t, tol, anorm, v(n), w(n), wsp(lwsp), a(*),
+     .     delta, gamma
       external matvec
 
 *-----Purpose----------------------------------------------------------|
@@ -255,6 +257,10 @@
 *              computes: y(1:n) <- A*x(1:n)
 *                        where A is the principal matrix.
 *
+*     delta   : local truncation error `safety factor'
+*
+*     gamma   : stepsize `shrinking factor'
+*
 *     itrace : (input) running mode. 0=silent, 1>=print happy breakdown,
 *              2>=print step-by-step info.  
 *
@@ -303,11 +309,8 @@
 *-----The following parameters may also be adjusted herein-------------|
 *
       integer mxreject, ideg
-      double precision delta, gamma
       parameter( mxreject = 0,
-     .           ideg     = 6,
-     .           delta    = 1.2d0,
-     .           gamma    = 0.9d0 )
+     .           ideg     = 6 )
 
 *     mxstep  : maximum allowable number of integration steps.
 *               The value 0 means an infinite number of steps.
@@ -318,10 +321,6 @@
 *     ideg    : the Pade approximation of type (ideg,ideg) is used as 
 *               an approximation to exp(H). The value 0 switches to the
 *               uniform rational Chebyshev approximation of type (14,14)
-*
-*     delta   : local truncation error `safety factor'
-*
-*     gamma   : stepsize `shrinking factor'
 *
 *----------------------------------------------------------------------|
 *     Roger B. Sidje (rbs@maths.uq.edu.au)
@@ -1837,12 +1836,14 @@ c$$$*----------------------------------------------------------------------|
 *----------------------------------------------------------------------|
 *----------------------------------------------------------------------|
       subroutine DGEXPV( a, ia, ja, n, nz, m, t, v, w, tol,mxstep,anorm,
-     .                   wsp,lwsp, iwsp,liwsp, matvec, itrace,iflag )
+     .                   wsp,lwsp, iwsp,liwsp, matvec, delta,gamma,
+     .                   itrace,iflag )
 
       implicit none
       integer n, m, lwsp, liwsp, itrace, iflag, iwsp(liwsp), mxstep,
      .     nz, ia(*), ja(*)
-      double precision t, tol, anorm, v(n), w(n), wsp(lwsp), a(*)
+      double precision t, tol, anorm, v(n), w(n), wsp(lwsp), a(*), 
+     .     delta, gamma
       external matvec
 
 *-----Purpose----------------------------------------------------------|
@@ -1899,6 +1900,10 @@ c$$$*----------------------------------------------------------------------|
 *              computes: y(1:n) <- A*x(1:n)
 *                        where A is the principal matrix.
 *
+*     delta   : local truncation error `safety factor'
+*
+*     gamma   : stepsize `shrinking factor'
+*
 *     itrace : (input) running mode. 0=silent, 1>=print happy breakdown,
 *              2>=print step-by-step info.
 *
@@ -1945,25 +1950,15 @@ c$$$*----------------------------------------------------------------------|
 *-----The following parameters may also be adjusted herein-------------|
 *
       integer mxreject, ideg
-      double precision delta, gamma
       parameter( mxreject = 0,
-     .           ideg     = 6,
-     .           delta    = 1.2d0,
-     .           gamma    = 0.9d0 )
-
-*     mxstep  : maximum allowable number of integration steps.
-*               The value 0 means an infinite number of steps.
-* 
+     .           ideg     = 6 )
+*
 *     mxreject: maximum allowable number of rejections at each step. 
 *               The value 0 means an infinite number of rejections.
 *
 *     ideg    : the Pade approximation of type (ideg,ideg) is used as 
 *               an approximation to exp(H). The value 0 switches to the
 *               uniform rational Chebyshev approximation of type (14,14)
-*
-*     delta   : local truncation error `safety factor'
-*
-*     gamma   : stepsize `shrinking factor'
 *
 *----------------------------------------------------------------------|
 *     Roger B. Sidje (rbs@maths.uq.edu.au)
@@ -2231,12 +2226,14 @@ c$$$*----------------------------------------------------------------------|
 *----------------------------------------------------------------------|
 *----------------------------------------------------------------------|
       subroutine DSEXPV( a, ia, ja, n, nz, m, t, v, w, tol,mxstep,anorm,
-     .                   wsp,lwsp, iwsp,liwsp, matvec, itrace,iflag )
+     .                   wsp,lwsp, iwsp,liwsp, matvec, delta,gamma,
+     .                   itrace,iflag )
 
       implicit none
       integer n, nz, m, lwsp, liwsp, itrace, iflag, iwsp(liwsp), mxstep,
      .     ia(*), ja(*)
-      double precision t, tol, anorm, v(n), w(n), wsp(lwsp), a(*)
+      double precision t, tol, anorm, v(n), w(n), wsp(lwsp), a(*),
+     .     delta, gamma
       external matvec
 
 *-----Purpose----------------------------------------------------------|
@@ -2293,6 +2290,10 @@ c$$$*----------------------------------------------------------------------|
 *              computes: y(1:n) <- A*x(1:n)
 *                        where A is the principal matrix.
 *
+*     delta   : local truncation error `safety factor'
+*
+*     gamma   : stepsize `shrinking factor'
+*
 *     itrace : (input) running mode. 0=silent, 1>=print happy breakdown,
 *              2>=print step-by-step info.
 *
@@ -2340,25 +2341,15 @@ c$$$*----------------------------------------------------------------------|
 *-----The following parameters may also be adjusted herein-------------|
 *
       integer mxreject, ideg
-      double precision delta, gamma
       parameter( mxreject = 0,
-     .           ideg     = 6,
-     .           delta    = 1.2d0,
-     .           gamma    = 0.9d0 )
+     .           ideg     = 6 )
 
-*     mxstep  : maximum allowable number of integration steps.
-*               The value 0 means an infinite number of steps.
-* 
 *     mxreject: maximum allowable number of rejections at each step. 
 *               The value 0 means an infinite number of rejections.
 *
 *     ideg    : the Pade approximation of type (ideg,ideg) is used as 
 *               an approximation to exp(H). The value 0 switches to the
 *               uniform rational Chebyshev approximation of type (14,14)
-*
-*     delta   : local truncation error `safety factor'
-*
-*     gamma   : stepsize `shrinking factor'
 *
 *----------------------------------------------------------------------|
 *     Roger B. Sidje (rbs@maths.uq.edu.au)
@@ -2627,12 +2618,13 @@ c$$$*----------------------------------------------------------------------|
 
 *----------------------------------------------------------------------|
       subroutine ZGEXPV( a, ia, ja, n, nz, m, t, v, w, tol,mxstep,anorm,
-     .                   wsp,lwsp, iwsp,liwsp, matvec, itrace,iflag )
+     .                   wsp,lwsp, iwsp,liwsp, matvec, delta,gamma,
+     .                   itrace,iflag )
 
       implicit none
       integer          n, nz, m, lwsp, liwsp, itrace, iflag, mxstep,
      .     iwsp(liwsp), ia(*), ja(*)
-      double precision t, tol, anorm
+      double precision t, tol, anorm, delta, gamma
       complex*16       v(n), w(n), wsp(lwsp), a(*)
       external         matvec
 
@@ -2691,6 +2683,10 @@ c$$$*----------------------------------------------------------------------|
 *              computes: y(1:n) <- A*x(1:n)
 *                        where A is the principal matrix.
 *
+*     delta   : local truncation error `safety factor'
+*
+*     gamma   : stepsize `shrinking factor'
+*
 *     itrace : (input) running mode. 0=silent, 1>=print happy breakdown,
 *              2>=print step-by-step info.
 *
@@ -2738,25 +2734,15 @@ c$$$*----------------------------------------------------------------------|
 *-----The following parameters may also be adjusted herein-------------|
 *
       integer mxreject, ideg
-      double precision delta, gamma
       parameter( mxreject = 0,
-     .           ideg     = 6,
-     .           delta    = 1.2d0,
-     .           gamma    = 0.9d0 )
+     .           ideg     = 6 )
 
-*     mxstep  : maximum allowable number of integration steps.
-*               The value 0 means an infinite number of steps.
-* 
 *     mxreject: maximum allowable number of rejections at each step. 
 *               The value 0 means an infinite number of rejections.
 *
 *     ideg    : the Pade approximation of type (ideg,ideg) is used as 
 *               an approximation to exp(H). The value 0 switches to the
 *               uniform rational Chebyshev approximation of type (14,14)
-*
-*     delta   : local truncation error `safety factor'
-*
-*     gamma   : stepsize `shrinking factor'
 *
 *----------------------------------------------------------------------|
 *     Roger B. Sidje (rbs@maths.uq.edu.au)
@@ -3027,12 +3013,13 @@ c$$$*----------------------------------------------------------------------|
 *----------------------------------------------------------------------|
 *----------------------------------------------------------------------|
       subroutine ZHEXPV( a, ia, ja, n, nz, m, t, v, w, tol,mxstep,anorm,
-     .                   wsp,lwsp, iwsp,liwsp, matvec, itrace,iflag )
+     .                   wsp,lwsp, iwsp,liwsp, matvec, delta,gamma,
+     .                   itrace,iflag )
 
       implicit none
       integer          n, nz, m, lwsp, liwsp, itrace, iflag, mxstep,
      .     iwsp(liwsp), ia(*), ja(*)
-      double precision t, tol, anorm
+      double precision t, tol, anorm, delta, gamma
       complex*16       v(n), w(n), wsp(lwsp), a(*)
       external         matvec
 
@@ -3090,6 +3077,10 @@ c$$$*----------------------------------------------------------------------|
 *              computes: y(1:n) <- A*x(1:n)
 *                        where A is the principal matrix.
 *
+*     delta   : local truncation error `safety factor'
+*
+*     gamma   : stepsize `shrinking factor'
+*
 *     itrace : (input) running mode. 0=silent, 1>=print happy breakdown,
 *              2>=print step-by-step info.
 *
@@ -3137,25 +3128,15 @@ c$$$*----------------------------------------------------------------------|
 *-----The following parameters may also be adjusted herein-------------|
 *
       integer mxreject, ideg
-      double precision delta, gamma
       parameter( mxreject = 0,
-     .           ideg     = 6,
-     .           delta    = 1.2d0,
-     .           gamma    = 0.9d0 )
+     .           ideg     = 6 )
 
-*     mxstep  : maximum allowable number of integration steps.
-*               The value 0 means an infinite number of steps.
-* 
 *     mxreject: maximum allowable number of rejections at each step. 
 *               The value 0 means an infinite number of rejections.
 *
 *     ideg    : the Pade approximation of type (ideg,ideg) is used as 
 *               an approximation to exp(H). The value 0 switches to the
 *               uniform rational Chebyshev approximation of type (14,14)
-*
-*     delta   : local truncation error `safety factor'
-*
-*     gamma   : stepsize `shrinking factor'
 *
 *----------------------------------------------------------------------|
 *     Roger B. Sidje (rbs@maths.uq.edu.au)
@@ -3430,12 +3411,14 @@ c$$$*----------------------------------------------------------------------|
 *----------------------------------------------------------------------|
 *----------------------------------------------------------------------|
       subroutine DGPHIV( a, ia, ja, n, nz, m, t, u, v, w, tol,mxstep,
-     .     anorm, wsp,lwsp, iwsp,liwsp, matvec, itrace,iflag ) 
+     .     anorm, wsp,lwsp, iwsp,liwsp, matvec, delta, gamma, 
+     .     itrace,iflag ) 
 
       implicit none
       integer n, nz, m, lwsp, liwsp, itrace, iflag, iwsp(liwsp), mxstep,
      .     ia(*), ja(*)
-      double precision t, tol, anorm, u(n), v(n), w(n), wsp(lwsp), a(*)
+      double precision t, tol, anorm, u(n), v(n), w(n), wsp(lwsp), a(*),
+     .     delta, gamma 
       external matvec
 
 *-----Purpose----------------------------------------------------------|
@@ -3493,6 +3476,10 @@ c$$$*----------------------------------------------------------------------|
 *              computes: y(1:n) <- A*x(1:n)
 *                        where A is the principal matrix.
 *
+*     delta   : local truncation error `safety factor'
+*
+*     gamma   : stepsize `shrinking factor'
+*
 *     itrace : (input) running mode. 0=silent, 1>=print happy breakdown,
 *              2>=print step-by-step info.
 *
@@ -3530,24 +3517,14 @@ c$$$*----------------------------------------------------------------------|
 *-----The following parameters may also be adjusted herein-------------|
 *
       integer mxreject, ideg
-      double precision delta, gamma
       parameter( mxreject = 0,
-     .           ideg     = 6, 
-     .           delta    = 1.2d0,
-     .           gamma    = 0.9d0 )
-
-*     mxstep  : maximum allowable number of integration steps.
-*               The value 0 means an infinite number of steps.
-* 
+     .           ideg     = 6 )
+  
 *     mxreject: maximum allowable number of rejections at each step. 
 *               The value 0 means an infinite number of rejections.
 *
 *     ideg    : the Pade approximation of type (ideg,ideg) is used as 
 *               an approximation to exp(H).
-*
-*     delta   : local truncation error `safety factor'
-*
-*     gamma   : stepsize `shrinking factor'
 *
 *----------------------------------------------------------------------|
 *     Roger B. Sidje (rbs@maths.uq.edu.au)
@@ -3802,12 +3779,14 @@ c$$$*----------------------------------------------------------------------|
 *----------------------------------------------------------------------|
 *----------------------------------------------------------------------|
       subroutine DSPHIV( a, ia, ja, n, nz, m, t, u, v, w, tol,mxstep, 
-     .     anorm, wsp,lwsp, iwsp,liwsp, matvec, itrace,iflag ) 
+     .     anorm, wsp,lwsp, iwsp,liwsp, matvec, delta,gamma,
+     .     itrace,iflag ) 
 
       implicit none
       integer n, nz, m, lwsp, liwsp, itrace, iflag, iwsp(liwsp), mxstep,
      .     ia(*), ja(*)
-      double precision t, tol, anorm, u(n), v(n), w(n), wsp(lwsp), a(*)
+      double precision t, tol, anorm, u(n), v(n), w(n), wsp(lwsp), a(*),
+     .     delta, gamma
       external matvec
 
 *-----Purpose----------------------------------------------------------|
@@ -3865,6 +3844,10 @@ c$$$*----------------------------------------------------------------------|
 *              computes: y(1:n) <- A*x(1:n)
 *                        where A is the principal matrix.
 *
+*     delta   : local truncation error `safety factor'
+*
+*     gamma   : stepsize `shrinking factor'
+*
 *     itrace : (input) running mode. 0=silent, 1>=print happy breakdown,
 *              2>=print step-by-step info.
 *
@@ -3902,24 +3885,14 @@ c$$$*----------------------------------------------------------------------|
 *-----The following parameters may also be adjusted herein-------------|
 *
       integer mxreject, ideg
-      double precision delta, gamma
       parameter( mxreject = 0,
-     .           ideg     = 6, 
-     .           delta    = 1.2d0,
-     .           gamma    = 0.9d0 )
-
-*     mxstep  : maximum allowable number of integration steps.
-*               The value 0 means an infinite number of steps.
-* 
+     .           ideg     = 6 ) 
+  
 *     mxreject: maximum allowable number of rejections at each step. 
 *               The value 0 means an infinite number of rejections.
 *
 *     ideg    : the Pade approximation of type (ideg,ideg) is used as 
 *               an approximation to exp(H).
-*
-*     delta   : local truncation error `safety factor'
-*
-*     gamma   : stepsize `shrinking factor'
 *
 *----------------------------------------------------------------------|
 *     Roger B. Sidje (rbs@maths.uq.edu.au)
@@ -4180,12 +4153,13 @@ c$$$*----------------------------------------------------------------------|
 *----------------------------------------------------------------------|
 *----------------------------------------------------------------------|
       subroutine ZGPHIV( a, ia, ja, n, nz, m, t, u, v, w, tol,mxstep,
-     .     anorm, wsp,lwsp, iwsp,liwsp, matvec, itrace,iflag )
+     .     anorm, wsp,lwsp, iwsp,liwsp, matvec, delta,gamma, 
+     .     itrace,iflag )
 
       implicit none
       integer          n, nz, m, lwsp, liwsp, itrace, iflag, mxstep,
      .     iwsp(liwsp), ia(*), ja(*)
-      double precision t, tol, anorm
+      double precision t, tol, anorm, delta, gamma
       complex*16       u(n), v(n), w(n), wsp(lwsp), a(*)
       external         matvec
 
@@ -4245,6 +4219,10 @@ c$$$*----------------------------------------------------------------------|
 *              computes: y(1:n) <- A*x(1:n)
 *                        where A is the principal matrix.
 *
+*     delta   : local truncation error `safety factor'
+*
+*     gamma   : stepsize `shrinking factor'
+*
 *     itrace : (input) running mode. 0=silent, 1>=print happy breakdown,
 *              2>=print step-by-step info.
 *
@@ -4282,24 +4260,14 @@ c$$$*----------------------------------------------------------------------|
 *-----The following parameters may also be adjusted herein-------------|
 *
       integer mxreject, ideg
-      double precision delta, gamma
       parameter( mxreject = 0,
-     .           ideg     = 6, 
-     .           delta    = 1.2d0,
-     .           gamma    = 0.9d0 )
+     .           ideg     = 6 ) 
 
-*     mxstep  : maximum allowable number of integration steps.
-*               The value 0 means an infinite number of steps.
-* 
 *     mxreject: maximum allowable number of rejections at each step. 
 *               The value 0 means an infinite number of rejections.
 *
 *     ideg    : the Pade approximation of type (ideg,ideg) is used as 
 *               an approximation to exp(H).
-*
-*     delta   : local truncation error `safety factor'
-*
-*     gamma   : stepsize `shrinking factor'
 *
 *----------------------------------------------------------------------|
 *     Roger B. Sidje (rbs@maths.uq.edu.au)
@@ -4563,12 +4531,13 @@ c$$$*----------------------------------------------------------------------|
 *----------------------------------------------------------------------|
 *----------------------------------------------------------------------|
       subroutine ZHPHIV( a, ia, ja, n, nz, m, t, u, v, w, tol,mxstep, 
-     .     anorm, wsp,lwsp, iwsp,liwsp, matvec, itrace,iflag )
+     .     anorm, wsp,lwsp, iwsp,liwsp, matvec, delta,gamma,
+     .     itrace,iflag )
 
       implicit none
       integer          n, nz, m, lwsp, liwsp, itrace, iflag, mxstep,
      .     iwsp(liwsp), ia(*), ja(*)
-      double precision t, tol, anorm
+      double precision t, tol, anorm, delta, gamma
       complex*16       u(n), v(n), w(n), wsp(lwsp), a(*)
       external         matvec
 
@@ -4627,6 +4596,10 @@ c$$$*----------------------------------------------------------------------|
 *              computes: y(1:n) <- A*x(1:n)
 *                        where A is the principal matrix.
 *
+*     delta   : local truncation error `safety factor'
+*
+*     gamma   : stepsize `shrinking factor'
+*
 *     itrace : (input) running mode. 0=silent, 1>=print happy breakdown,
 *              2>=print step-by-step info.
 *
@@ -4664,24 +4637,14 @@ c$$$*----------------------------------------------------------------------|
 *-----The following parameters may also be adjusted herein-------------|
 *
       integer mxreject, ideg
-      double precision delta, gamma
       parameter( mxreject = 0,
-     .           ideg     = 6, 
-     .           delta    = 1.2d0,
-     .           gamma    = 0.9d0 )
+     .           ideg     = 6 )
 
-*     mxstep  : maximum allowable number of integration steps.
-*               The value 0 means an infinite number of steps.
-* 
 *     mxreject: maximum allowable number of rejections at each step. 
 *               The value 0 means an infinite number of rejections.
 *
 *     ideg    : the Pade approximation of type (ideg,ideg) is used as 
 *               an approximation to exp(H).
-*
-*     delta   : local truncation error `safety factor'
-*
-*     gamma   : stepsize `shrinking factor'
 *
 *----------------------------------------------------------------------|
 *     Roger B. Sidje (rbs@maths.uq.edu.au)
