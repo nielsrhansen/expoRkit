@@ -7,12 +7,10 @@ and a little more.
 
 Version 0.9 is available from CRAN. It can be installed from R.
 
-    :::R
 	install.packages(expoRkit)
 	
 Then load the package and check out a help file.
 
-	:::R
 	library(expoRkit)
 	?expv
 	
@@ -21,22 +19,19 @@ Then load the package and check out a help file.
 The current development version can be installed from the source in this
 repository using the `devtools` package.
 
-	:::R
 	install.packages("devtools")  ## if 'devtools' not installed
 	library(devtools)
-	install_bitbucket(repo = "exporkit", username = "nielsrhansen")
+	install_github(repo = ""nielsrhansen/expoRkit")
 
-If you experience permission problems during installation, try
+If you experience local permission problems during installation, try
 installing in a local directory, e.g.
 
-	:::R
-	install_bitbucket(repo = "exporkit", username = "nielsrhansen",
+	install_bitbucket(repo = ""nielsrhansen/expoRkit",
 	                  args = "--library=~/local/R/library")
 					  
 provided that the directory exists. Then load the package
 from the local library
 
-	:::R
 	library(expoRkit, lib.loc = "~/local/R/library")
 
 
