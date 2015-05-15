@@ -26,7 +26,7 @@ repository using the `devtools` package.
 If you experience local permission problems during installation, try
 installing in a local directory, e.g.
 
-	install_bitbucket(repo = ""nielsrhansen/expoRkit",
+	install_github(repo = ""nielsrhansen/expoRkit",
 	                  args = "--library=~/local/R/library")
 					  
 provided that the directory exists. Then load the package
