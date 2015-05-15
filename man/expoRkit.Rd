@@ -13,8 +13,8 @@ exponentiation.
 \tabular{ll}{
 Package: \tab expoRkit \cr
 Type: \tab Package \cr
-Version: \tab 0.9.1 \cr
-Date: \tab 2012-10-08\cr
+Version: \tab 0.9.2 \cr
+Date: \tab 2012-05-05\cr
 License: \tab GPL (>= 2)\cr
 LazyLoad: \tab yes \cr
 }
