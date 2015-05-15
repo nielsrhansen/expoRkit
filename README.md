@@ -21,13 +21,13 @@ repository using the `devtools` package.
 
 	install.packages("devtools")  ## if 'devtools' not installed
 	library(devtools)
-	install_github(repo = ""nielsrhansen/expoRkit")
+	install_github("nielsrhansen/expoRkit")
 
 If you experience local permission problems during installation, try
 installing in a local directory, e.g.
 
-	install_github(repo = ""nielsrhansen/expoRkit",
-	                  args = "--library=~/local/R/library")
+	install_github("nielsrhansen/expoRkit",
+	               args = "--library=~/local/R/library")
 					  
 provided that the directory exists. Then load the package
 from the local library
