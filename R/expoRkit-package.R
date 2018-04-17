@@ -32,4 +32,5 @@
 ##' \email{Niels.R.Hansen@@math.ku.dk}.
 ##' @keywords package 
 ##' @docType package
+##' @import methods
 NULL

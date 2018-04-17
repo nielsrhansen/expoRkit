@@ -11,13 +11,13 @@ Authors@R: c(person("Roger B.", "Sidje", email = "roger.b.sidje@ua.edu",
     )
 Maintainer: Niels Richard Hansen <Niels.R.Hansen@math.ku.dk>
 Depends:
-    R (>= 2.14.1),
-    methods
+    R (>= 2.14.1)
 Imports:
+    methods,
     Matrix,
     SparseM
 Description: An R-interface to the Fortran package Expokit.
-URL: https://bitbucket.org/nielsrhansen/exporkit/
+URL: https://github.com/nielsrhansen/expoRkit
 License: GPL (>= 2)
 LazyLoad: yes
 Collate:
