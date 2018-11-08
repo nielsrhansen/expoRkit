@@ -179,14 +179,12 @@
 
 *----------------------------------------------------------------------|
       subroutine DMEXPV( a, ia, ja, n, nz, m, t, v, w, tol,mxstep, 
-     .     anorm, wsp,lwsp, iwsp,liwsp, matvec, delta,gamma,
-     .     itrace,iflag )
+     .     anorm, wsp,lwsp, iwsp,liwsp, matvec, itrace,iflag )
 
       implicit none
       integer n, m, lwsp, liwsp, itrace, iflag, iwsp(liwsp), mxstep,
      .     nz, ia(*), ja(*)
-      double precision t, tol, anorm, v(n), w(n), wsp(lwsp), a(*),
-     .     delta, gamma
+      double precision t, tol, anorm, v(n), w(n), wsp(lwsp), a(*)
       external matvec
 
 *-----Purpose----------------------------------------------------------|
@@ -257,10 +255,6 @@
 *              computes: y(1:n) <- A*x(1:n)
 *                        where A is the principal matrix.
 *
-*     delta   : local truncation error `safety factor'
-*
-*     gamma   : stepsize `shrinking factor'
-*
 *     itrace : (input) running mode. 0=silent, 1>=print happy breakdown,
 *              2>=print step-by-step info.  
 *
@@ -309,8 +303,11 @@
 *-----The following parameters may also be adjusted herein-------------|
 *
       integer mxreject, ideg
+      double precision delta, gamma
       parameter( mxreject = 0,
-     .           ideg     = 6 )
+     .           ideg     = 6,
+     .           delta    = 1.2d0,
+     .           gamma    = 0.9d0 )
 
 *     mxstep  : maximum allowable number of integration steps.
 *               The value 0 means an infinite number of steps.
@@ -321,6 +318,10 @@
 *     ideg    : the Pade approximation of type (ideg,ideg) is used as 
 *               an approximation to exp(H). The value 0 switches to the
 *               uniform rational Chebyshev approximation of type (14,14)
+*
+*     delta   : local truncation error `safety factor'
+*
+*     gamma   : stepsize `shrinking factor'
 *
 *----------------------------------------------------------------------|
 *     Roger B. Sidje (rbs@maths.uq.edu.au)
@@ -1007,7 +1008,7 @@
       complex*16 cp, cq, scale, scale2, ZERO, ONE
 
       parameter( ZERO=(0.0d0,0.0d0), ONE=(1.0d0,0.0d0) )
-      intrinsic ABS, CMPLX, DBLE, INT, LOG, MAX
+      intrinsic ABS, DCMPLX, DBLE, INT, LOG, MAX
 
 *---  check restrictions on input parameters ...
       mm = m*m
@@ -1046,7 +1047,7 @@
          goto 600
       endif
       ns = MAX( 0,INT(LOG(hnorm)/LOG(2.0d0))+2 )
-      scale =  CMPLX( t/DBLE(2**ns),0.0d0 )
+      scale =  DCMPLX( t/DBLE(2**ns),0.0d0 )
       scale2 = scale*scale
 *
 *---  compute Pade coefficients ...
@@ -1185,7 +1186,7 @@ c$$$      double precision hnorm
 c$$$      complex*16 cp, cq, scale, scale2, ZERO, ONE
 c$$$
 c$$$      parameter( ZERO=(0.0d0,0.0d0), ONE=(1.0d0,0.0d0) )
-c$$$      intrinsic ABS, CMPLX, DBLE, INT, LOG, MAX
+c$$$      intrinsic ABS, DCMPLX, DBLE, INT, LOG, MAX
 c$$$
 c$$$*---  check restrictions on input parameters ...
 c$$$      mm = m*m
@@ -1224,7 +1225,7 @@ c$$$         iflag = 3
 c$$$         goto 600
 c$$$      endif
 c$$$      ns = MAX( 0,INT(LOG(hnorm)/LOG(2.0d0))+2 )
-c$$$      scale =  CMPLX( t/DBLE(2**ns),0.0d0 )
+c$$$      scale =  DCMPLX( t/DBLE(2**ns),0.0d0 )
 c$$$      scale2 = scale*scale
 c$$$*
 c$$$*---  compute Pade coefficients ...
@@ -1449,7 +1450,7 @@ c$$$      parameter ( ndeg=7 )
 c$$$      double precision alpha0
 c$$$      complex*16 alpha(ndeg), theta(ndeg), w
 c$$$
-c$$$      intrinsic ABS,CMPLX,DBLE,MIN
+c$$$      intrinsic ABS,DCMPLX,DBLE,MIN
 c$$$      
 c$$$*---  Pointers ...
 c$$$
@@ -1754,7 +1755,7 @@ c$$$*----------------------------------------------------------------------|
       integer ndeg, i, j, k, ip, ih, iy, iz
       parameter ( ndeg=7, ZERO=(0.0d0,0.0d0) )
       double precision alpha0
-      complex*16 alpha(ndeg), theta(ndeg), tmpc
+      complex*16 alpha(2*ndeg), theta(2*ndeg), tmpc
 
       intrinsic ABS,DBLE,CONJG,MIN
       
@@ -1836,14 +1837,12 @@ c$$$*----------------------------------------------------------------------|
 *----------------------------------------------------------------------|
 *----------------------------------------------------------------------|
       subroutine DGEXPV( a, ia, ja, n, nz, m, t, v, w, tol,mxstep,anorm,
-     .                   wsp,lwsp, iwsp,liwsp, matvec, delta,gamma,
-     .                   itrace,iflag )
+     .                   wsp,lwsp, iwsp,liwsp, matvec, itrace,iflag )
 
       implicit none
       integer n, m, lwsp, liwsp, itrace, iflag, iwsp(liwsp), mxstep,
      .     nz, ia(*), ja(*)
-      double precision t, tol, anorm, v(n), w(n), wsp(lwsp), a(*), 
-     .     delta, gamma
+      double precision t, tol, anorm, v(n), w(n), wsp(lwsp), a(*)
       external matvec
 
 *-----Purpose----------------------------------------------------------|
@@ -1900,10 +1899,6 @@ c$$$*----------------------------------------------------------------------|
 *              computes: y(1:n) <- A*x(1:n)
 *                        where A is the principal matrix.
 *
-*     delta   : local truncation error `safety factor'
-*
-*     gamma   : stepsize `shrinking factor'
-*
 *     itrace : (input) running mode. 0=silent, 1>=print happy breakdown,
 *              2>=print step-by-step info.
 *
@@ -1950,15 +1945,25 @@ c$$$*----------------------------------------------------------------------|
 *-----The following parameters may also be adjusted herein-------------|
 *
       integer mxreject, ideg
+      double precision delta, gamma
       parameter( mxreject = 0,
-     .           ideg     = 6 )
-*
+     .           ideg     = 6,
+     .           delta    = 1.2d0,
+     .           gamma    = 0.9d0 )
+
+*     mxstep  : maximum allowable number of integration steps.
+*               The value 0 means an infinite number of steps.
+* 
 *     mxreject: maximum allowable number of rejections at each step. 
 *               The value 0 means an infinite number of rejections.
 *
 *     ideg    : the Pade approximation of type (ideg,ideg) is used as 
 *               an approximation to exp(H). The value 0 switches to the
 *               uniform rational Chebyshev approximation of type (14,14)
+*
+*     delta   : local truncation error `safety factor'
+*
+*     gamma   : stepsize `shrinking factor'
 *
 *----------------------------------------------------------------------|
 *     Roger B. Sidje (rbs@maths.uq.edu.au)
@@ -2226,14 +2231,12 @@ c$$$*----------------------------------------------------------------------|
 *----------------------------------------------------------------------|
 *----------------------------------------------------------------------|
       subroutine DSEXPV( a, ia, ja, n, nz, m, t, v, w, tol,mxstep,anorm,
-     .                   wsp,lwsp, iwsp,liwsp, matvec, delta,gamma,
-     .                   itrace,iflag )
+     .                   wsp,lwsp, iwsp,liwsp, matvec, itrace,iflag )
 
       implicit none
       integer n, nz, m, lwsp, liwsp, itrace, iflag, iwsp(liwsp), mxstep,
      .     ia(*), ja(*)
-      double precision t, tol, anorm, v(n), w(n), wsp(lwsp), a(*),
-     .     delta, gamma
+      double precision t, tol, anorm, v(n), w(n), wsp(lwsp), a(*)
       external matvec
 
 *-----Purpose----------------------------------------------------------|
@@ -2290,10 +2293,6 @@ c$$$*----------------------------------------------------------------------|
 *              computes: y(1:n) <- A*x(1:n)
 *                        where A is the principal matrix.
 *
-*     delta   : local truncation error `safety factor'
-*
-*     gamma   : stepsize `shrinking factor'
-*
 *     itrace : (input) running mode. 0=silent, 1>=print happy breakdown,
 *              2>=print step-by-step info.
 *
@@ -2341,15 +2340,25 @@ c$$$*----------------------------------------------------------------------|
 *-----The following parameters may also be adjusted herein-------------|
 *
       integer mxreject, ideg
+      double precision delta, gamma
       parameter( mxreject = 0,
-     .           ideg     = 6 )
+     .           ideg     = 6,
+     .           delta    = 1.2d0,
+     .           gamma    = 0.9d0 )
 
+*     mxstep  : maximum allowable number of integration steps.
+*               The value 0 means an infinite number of steps.
+* 
 *     mxreject: maximum allowable number of rejections at each step. 
 *               The value 0 means an infinite number of rejections.
 *
 *     ideg    : the Pade approximation of type (ideg,ideg) is used as 
 *               an approximation to exp(H). The value 0 switches to the
 *               uniform rational Chebyshev approximation of type (14,14)
+*
+*     delta   : local truncation error `safety factor'
+*
+*     gamma   : stepsize `shrinking factor'
 *
 *----------------------------------------------------------------------|
 *     Roger B. Sidje (rbs@maths.uq.edu.au)
@@ -2618,13 +2627,12 @@ c$$$*----------------------------------------------------------------------|
 
 *----------------------------------------------------------------------|
       subroutine ZGEXPV( a, ia, ja, n, nz, m, t, v, w, tol,mxstep,anorm,
-     .                   wsp,lwsp, iwsp,liwsp, matvec, delta,gamma,
-     .                   itrace,iflag )
+     .                   wsp,lwsp, iwsp,liwsp, matvec, itrace,iflag )
 
       implicit none
       integer          n, nz, m, lwsp, liwsp, itrace, iflag, mxstep,
      .     iwsp(liwsp), ia(*), ja(*)
-      double precision t, tol, anorm, delta, gamma
+      double precision t, tol, anorm
       complex*16       v(n), w(n), wsp(lwsp), a(*)
       external         matvec
 
@@ -2683,10 +2691,6 @@ c$$$*----------------------------------------------------------------------|
 *              computes: y(1:n) <- A*x(1:n)
 *                        where A is the principal matrix.
 *
-*     delta   : local truncation error `safety factor'
-*
-*     gamma   : stepsize `shrinking factor'
-*
 *     itrace : (input) running mode. 0=silent, 1>=print happy breakdown,
 *              2>=print step-by-step info.
 *
@@ -2734,15 +2738,25 @@ c$$$*----------------------------------------------------------------------|
 *-----The following parameters may also be adjusted herein-------------|
 *
       integer mxreject, ideg
+      double precision delta, gamma
       parameter( mxreject = 0,
-     .           ideg     = 6 )
+     .           ideg     = 6,
+     .           delta    = 1.2d0,
+     .           gamma    = 0.9d0 )
 
+*     mxstep  : maximum allowable number of integration steps.
+*               The value 0 means an infinite number of steps.
+* 
 *     mxreject: maximum allowable number of rejections at each step. 
 *               The value 0 means an infinite number of rejections.
 *
 *     ideg    : the Pade approximation of type (ideg,ideg) is used as 
 *               an approximation to exp(H). The value 0 switches to the
 *               uniform rational Chebyshev approximation of type (14,14)
+*
+*     delta   : local truncation error `safety factor'
+*
+*     gamma   : stepsize `shrinking factor'
 *
 *----------------------------------------------------------------------|
 *     Roger B. Sidje (rbs@maths.uq.edu.au)
@@ -2761,7 +2775,7 @@ c$$$*----------------------------------------------------------------------|
      .                 vnorm, avnorm, hj1j, hump, SQR1
       complex*16 hij
 
-      intrinsic AINT,ABS,CMPLX,DBLE,INT,LOG10,MAX,MIN,NINT,SIGN,SQRT
+      intrinsic AINT,ABS,DCMPLX,DBLE,INT,LOG10,MAX,MIN,NINT,SIGN,SQRT
       complex*16 ZDOTC
       double precision DZNRM2
 *
@@ -2865,7 +2879,7 @@ c$$$*----------------------------------------------------------------------|
             t_step = t_out-t_now
             goto 300
          endif
-         wsp(ih+(j-1)*mh+j) = CMPLX( hj1j )
+         wsp(ih+(j-1)*mh+j) = DCMPLX( hj1j )
          call ZDSCAL( n, 1.0d0/hj1j, wsp(j1v),1 )
          j1v = j1v + n
  200  continue
@@ -2954,7 +2968,7 @@ c$$$*----------------------------------------------------------------------|
 *---  now update w = beta*V*exp(t_step*H)*e1 and the hump ...
 *
       mx = mbrkdwn + MAX( 0,k1-1 )
-      hij = CMPLX( beta )
+      hij = DCMPLX( beta )
       call ZGEMV( 'n', n,mx,hij,wsp(iv),n,wsp(iexph),1,ZERO,w,1 )
       beta = DZNRM2( n, w,1 )
       hump = MAX( hump, beta )
@@ -2999,27 +3013,26 @@ c$$$*----------------------------------------------------------------------|
       iwsp(6) = ibrkflag
       iwsp(7) = mbrkdwn
 
-      wsp(1)  = CMPLX( step_min )
-      wsp(2)  = CMPLX( step_max )
-      wsp(3)  = CMPLX( 0.0d0 )
-      wsp(4)  = CMPLX( 0.0d0 )
-      wsp(5)  = CMPLX( x_error )
-      wsp(6)  = CMPLX( s_error )
-      wsp(7)  = CMPLX( tbrkdwn )
-      wsp(8)  = CMPLX( sgn*t_now )
-      wsp(9)  = CMPLX( hump/vnorm )
-      wsp(10) = CMPLX( beta/vnorm )
+      wsp(1)  = DCMPLX( step_min )
+      wsp(2)  = DCMPLX( step_max )
+      wsp(3)  = DCMPLX( 0.0d0 )
+      wsp(4)  = DCMPLX( 0.0d0 )
+      wsp(5)  = DCMPLX( x_error )
+      wsp(6)  = DCMPLX( s_error )
+      wsp(7)  = DCMPLX( tbrkdwn )
+      wsp(8)  = DCMPLX( sgn*t_now )
+      wsp(9)  = DCMPLX( hump/vnorm )
+      wsp(10) = DCMPLX( beta/vnorm )
  600  END
 *----------------------------------------------------------------------|
 *----------------------------------------------------------------------|
       subroutine ZHEXPV( a, ia, ja, n, nz, m, t, v, w, tol,mxstep,anorm,
-     .                   wsp,lwsp, iwsp,liwsp, matvec, delta,gamma,
-     .                   itrace,iflag )
+     .                   wsp,lwsp, iwsp,liwsp, matvec, itrace,iflag )
 
       implicit none
       integer          n, nz, m, lwsp, liwsp, itrace, iflag, mxstep,
      .     iwsp(liwsp), ia(*), ja(*)
-      double precision t, tol, anorm, delta, gamma
+      double precision t, tol, anorm
       complex*16       v(n), w(n), wsp(lwsp), a(*)
       external         matvec
 
@@ -3077,10 +3090,6 @@ c$$$*----------------------------------------------------------------------|
 *              computes: y(1:n) <- A*x(1:n)
 *                        where A is the principal matrix.
 *
-*     delta   : local truncation error `safety factor'
-*
-*     gamma   : stepsize `shrinking factor'
-*
 *     itrace : (input) running mode. 0=silent, 1>=print happy breakdown,
 *              2>=print step-by-step info.
 *
@@ -3128,15 +3137,25 @@ c$$$*----------------------------------------------------------------------|
 *-----The following parameters may also be adjusted herein-------------|
 *
       integer mxreject, ideg
+      double precision delta, gamma
       parameter( mxreject = 0,
-     .           ideg     = 6 )
+     .           ideg     = 6,
+     .           delta    = 1.2d0,
+     .           gamma    = 0.9d0 )
 
+*     mxstep  : maximum allowable number of integration steps.
+*               The value 0 means an infinite number of steps.
+* 
 *     mxreject: maximum allowable number of rejections at each step. 
 *               The value 0 means an infinite number of rejections.
 *
 *     ideg    : the Pade approximation of type (ideg,ideg) is used as 
 *               an approximation to exp(H). The value 0 switches to the
 *               uniform rational Chebyshev approximation of type (14,14)
+*
+*     delta   : local truncation error `safety factor'
+*
+*     gamma   : stepsize `shrinking factor'
 *
 *----------------------------------------------------------------------|
 *     Roger B. Sidje (rbs@maths.uq.edu.au)
@@ -3155,7 +3174,7 @@ c$$$*----------------------------------------------------------------------|
      .                 vnorm, avnorm, hj1j, hump, SQR1
       complex*16 hjj
 
-      intrinsic AINT,ABS,CMPLX,DBLE,INT,LOG10,MAX,MIN,NINT,SIGN,SQRT
+      intrinsic AINT,ABS,DCMPLX,DBLE,INT,LOG10,MAX,MIN,NINT,SIGN,SQRT
       complex*16 ZDOTC
       double precision DZNRM2
 *
@@ -3260,8 +3279,8 @@ c$$$*----------------------------------------------------------------------|
             t_step = t_out-t_now
             goto 300
          endif
-         wsp(ih+(j-1)*mh+j) = CMPLX( hj1j )
-         wsp(ih+j*mh+j-1) = CMPLX( hj1j )
+         wsp(ih+(j-1)*mh+j) = DCMPLX( hj1j )
+         wsp(ih+j*mh+j-1) = DCMPLX( hj1j )
          call ZDSCAL( n, 1.0d0/hj1j, wsp(j1v),1 )
          j1v = j1v + n
  200  continue
@@ -3352,7 +3371,7 @@ c$$$*----------------------------------------------------------------------|
 *---  now update w = beta*V*exp(t_step*H)*e1 and the hump ...
 *
       mx = mbrkdwn + MAX( 0,k1-1 )
-      hjj = CMPLX( beta )
+      hjj = DCMPLX( beta )
       call ZGEMV( 'n', n,mx,hjj,wsp(iv),n,wsp(iexph),1,ZERO,w,1 )
       beta = DZNRM2( n, w,1 )
       hump = MAX( hump, beta )
@@ -3397,28 +3416,26 @@ c$$$*----------------------------------------------------------------------|
       iwsp(6) = ibrkflag
       iwsp(7) = mbrkdwn
 
-      wsp(1)  = CMPLX( step_min )
-      wsp(2)  = CMPLX( step_max )
-      wsp(3)  = CMPLX( 0.0d0 )
-      wsp(4)  = CMPLX( 0.0d0 )
-      wsp(5)  = CMPLX( x_error )
-      wsp(6)  = CMPLX( s_error )
-      wsp(7)  = CMPLX( tbrkdwn )
-      wsp(8)  = CMPLX( sgn*t_now )
-      wsp(9)  = CMPLX( hump/vnorm )
-      wsp(10) = CMPLX( beta/vnorm )
+      wsp(1)  = DCMPLX( step_min )
+      wsp(2)  = DCMPLX( step_max )
+      wsp(3)  = DCMPLX( 0.0d0 )
+      wsp(4)  = DCMPLX( 0.0d0 )
+      wsp(5)  = DCMPLX( x_error )
+      wsp(6)  = DCMPLX( s_error )
+      wsp(7)  = DCMPLX( tbrkdwn )
+      wsp(8)  = DCMPLX( sgn*t_now )
+      wsp(9)  = DCMPLX( hump/vnorm )
+      wsp(10) = DCMPLX( beta/vnorm )
  600  END
 *----------------------------------------------------------------------|
 *----------------------------------------------------------------------|
       subroutine DGPHIV( a, ia, ja, n, nz, m, t, u, v, w, tol,mxstep,
-     .     anorm, wsp,lwsp, iwsp,liwsp, matvec, delta, gamma, 
-     .     itrace,iflag ) 
+     .     anorm, wsp,lwsp, iwsp,liwsp, matvec, itrace,iflag ) 
 
       implicit none
       integer n, nz, m, lwsp, liwsp, itrace, iflag, iwsp(liwsp), mxstep,
      .     ia(*), ja(*)
-      double precision t, tol, anorm, u(n), v(n), w(n), wsp(lwsp), a(*),
-     .     delta, gamma 
+      double precision t, tol, anorm, u(n), v(n), w(n), wsp(lwsp), a(*)
       external matvec
 
 *-----Purpose----------------------------------------------------------|
@@ -3476,10 +3493,6 @@ c$$$*----------------------------------------------------------------------|
 *              computes: y(1:n) <- A*x(1:n)
 *                        where A is the principal matrix.
 *
-*     delta   : local truncation error `safety factor'
-*
-*     gamma   : stepsize `shrinking factor'
-*
 *     itrace : (input) running mode. 0=silent, 1>=print happy breakdown,
 *              2>=print step-by-step info.
 *
@@ -3517,14 +3530,24 @@ c$$$*----------------------------------------------------------------------|
 *-----The following parameters may also be adjusted herein-------------|
 *
       integer mxreject, ideg
+      double precision delta, gamma
       parameter( mxreject = 0,
-     .           ideg     = 6 )
-  
+     .           ideg     = 6, 
+     .           delta    = 1.2d0,
+     .           gamma    = 0.9d0 )
+
+*     mxstep  : maximum allowable number of integration steps.
+*               The value 0 means an infinite number of steps.
+* 
 *     mxreject: maximum allowable number of rejections at each step. 
 *               The value 0 means an infinite number of rejections.
 *
 *     ideg    : the Pade approximation of type (ideg,ideg) is used as 
 *               an approximation to exp(H).
+*
+*     delta   : local truncation error `safety factor'
+*
+*     gamma   : stepsize `shrinking factor'
 *
 *----------------------------------------------------------------------|
 *     Roger B. Sidje (rbs@maths.uq.edu.au)
@@ -3779,14 +3802,12 @@ c$$$*----------------------------------------------------------------------|
 *----------------------------------------------------------------------|
 *----------------------------------------------------------------------|
       subroutine DSPHIV( a, ia, ja, n, nz, m, t, u, v, w, tol,mxstep, 
-     .     anorm, wsp,lwsp, iwsp,liwsp, matvec, delta,gamma,
-     .     itrace,iflag ) 
+     .     anorm, wsp,lwsp, iwsp,liwsp, matvec, itrace,iflag ) 
 
       implicit none
       integer n, nz, m, lwsp, liwsp, itrace, iflag, iwsp(liwsp), mxstep,
      .     ia(*), ja(*)
-      double precision t, tol, anorm, u(n), v(n), w(n), wsp(lwsp), a(*),
-     .     delta, gamma
+      double precision t, tol, anorm, u(n), v(n), w(n), wsp(lwsp), a(*)
       external matvec
 
 *-----Purpose----------------------------------------------------------|
@@ -3844,10 +3865,6 @@ c$$$*----------------------------------------------------------------------|
 *              computes: y(1:n) <- A*x(1:n)
 *                        where A is the principal matrix.
 *
-*     delta   : local truncation error `safety factor'
-*
-*     gamma   : stepsize `shrinking factor'
-*
 *     itrace : (input) running mode. 0=silent, 1>=print happy breakdown,
 *              2>=print step-by-step info.
 *
@@ -3885,14 +3902,24 @@ c$$$*----------------------------------------------------------------------|
 *-----The following parameters may also be adjusted herein-------------|
 *
       integer mxreject, ideg
+      double precision delta, gamma
       parameter( mxreject = 0,
-     .           ideg     = 6 ) 
-  
+     .           ideg     = 6, 
+     .           delta    = 1.2d0,
+     .           gamma    = 0.9d0 )
+
+*     mxstep  : maximum allowable number of integration steps.
+*               The value 0 means an infinite number of steps.
+* 
 *     mxreject: maximum allowable number of rejections at each step. 
 *               The value 0 means an infinite number of rejections.
 *
 *     ideg    : the Pade approximation of type (ideg,ideg) is used as 
 *               an approximation to exp(H).
+*
+*     delta   : local truncation error `safety factor'
+*
+*     gamma   : stepsize `shrinking factor'
 *
 *----------------------------------------------------------------------|
 *     Roger B. Sidje (rbs@maths.uq.edu.au)
@@ -4153,13 +4180,12 @@ c$$$*----------------------------------------------------------------------|
 *----------------------------------------------------------------------|
 *----------------------------------------------------------------------|
       subroutine ZGPHIV( a, ia, ja, n, nz, m, t, u, v, w, tol,mxstep,
-     .     anorm, wsp,lwsp, iwsp,liwsp, matvec, delta,gamma, 
-     .     itrace,iflag )
+     .     anorm, wsp,lwsp, iwsp,liwsp, matvec, itrace,iflag )
 
       implicit none
       integer          n, nz, m, lwsp, liwsp, itrace, iflag, mxstep,
      .     iwsp(liwsp), ia(*), ja(*)
-      double precision t, tol, anorm, delta, gamma
+      double precision t, tol, anorm
       complex*16       u(n), v(n), w(n), wsp(lwsp), a(*)
       external         matvec
 
@@ -4219,10 +4245,6 @@ c$$$*----------------------------------------------------------------------|
 *              computes: y(1:n) <- A*x(1:n)
 *                        where A is the principal matrix.
 *
-*     delta   : local truncation error `safety factor'
-*
-*     gamma   : stepsize `shrinking factor'
-*
 *     itrace : (input) running mode. 0=silent, 1>=print happy breakdown,
 *              2>=print step-by-step info.
 *
@@ -4260,14 +4282,24 @@ c$$$*----------------------------------------------------------------------|
 *-----The following parameters may also be adjusted herein-------------|
 *
       integer mxreject, ideg
+      double precision delta, gamma
       parameter( mxreject = 0,
-     .           ideg     = 6 ) 
+     .           ideg     = 6, 
+     .           delta    = 1.2d0,
+     .           gamma    = 0.9d0 )
 
+*     mxstep  : maximum allowable number of integration steps.
+*               The value 0 means an infinite number of steps.
+* 
 *     mxreject: maximum allowable number of rejections at each step. 
 *               The value 0 means an infinite number of rejections.
 *
 *     ideg    : the Pade approximation of type (ideg,ideg) is used as 
 *               an approximation to exp(H).
+*
+*     delta   : local truncation error `safety factor'
+*
+*     gamma   : stepsize `shrinking factor'
 *
 *----------------------------------------------------------------------|
 *     Roger B. Sidje (rbs@maths.uq.edu.au)
@@ -4286,7 +4318,7 @@ c$$$*----------------------------------------------------------------------|
      .                 avnorm, hj1j, SQR1
       complex*16 hij
 
-      intrinsic AINT,ABS,CMPLX,DBLE,INT,LOG10,MAX,MIN,NINT,SIGN,SQRT
+      intrinsic AINT,ABS,DCMPLX,DBLE,INT,LOG10,MAX,MIN,NINT,SIGN,SQRT
       complex*16 ZDOTC
       double precision DZNRM2
 *
@@ -4390,7 +4422,7 @@ c$$$*----------------------------------------------------------------------|
             t_step = t_out-t_now
             goto 300
          endif
-         wsp(ih+(j-1)*mh+j) = CMPLX( hj1j )
+         wsp(ih+(j-1)*mh+j) = DCMPLX( hj1j )
          call ZDSCAL( n, 1.0d0/hj1j, wsp(j1v),1 )
          j1v = j1v + n
  200  continue
@@ -4476,7 +4508,7 @@ c$$$*----------------------------------------------------------------------|
       endif
 *
       mx = mbrkdwn + MAX( 0,k1-2 )
-      hij = CMPLX( beta )
+      hij = DCMPLX( beta )
       call ZGEMV( 'n', n,mx,hij,wsp(iv),n,wsp(iphih),1,ONE,w,1 )
 *
 *---  suggested value for the next stepsize ...
@@ -4519,25 +4551,24 @@ c$$$*----------------------------------------------------------------------|
       iwsp(6) = ibrkflag
       iwsp(7) = mbrkdwn
 
-      wsp(1)  = CMPLX( step_min )
-      wsp(2)  = CMPLX( step_max )
-      wsp(3)  = CMPLX( 0.0d0 )
-      wsp(4)  = CMPLX( 0.0d0 )
-      wsp(5)  = CMPLX( x_error )
-      wsp(6)  = CMPLX( s_error )
-      wsp(7)  = CMPLX( tbrkdwn )
-      wsp(8)  = CMPLX( sgn*t_now )
+      wsp(1)  = DCMPLX( step_min )
+      wsp(2)  = DCMPLX( step_max )
+      wsp(3)  = DCMPLX( 0.0d0 )
+      wsp(4)  = DCMPLX( 0.0d0 )
+      wsp(5)  = DCMPLX( x_error )
+      wsp(6)  = DCMPLX( s_error )
+      wsp(7)  = DCMPLX( tbrkdwn )
+      wsp(8)  = DCMPLX( sgn*t_now )
  600  END
 *----------------------------------------------------------------------|
 *----------------------------------------------------------------------|
       subroutine ZHPHIV( a, ia, ja, n, nz, m, t, u, v, w, tol,mxstep, 
-     .     anorm, wsp,lwsp, iwsp,liwsp, matvec, delta,gamma,
-     .     itrace,iflag )
+     .     anorm, wsp,lwsp, iwsp,liwsp, matvec, itrace,iflag )
 
       implicit none
       integer          n, nz, m, lwsp, liwsp, itrace, iflag, mxstep,
      .     iwsp(liwsp), ia(*), ja(*)
-      double precision t, tol, anorm, delta, gamma
+      double precision t, tol, anorm
       complex*16       u(n), v(n), w(n), wsp(lwsp), a(*)
       external         matvec
 
@@ -4596,10 +4627,6 @@ c$$$*----------------------------------------------------------------------|
 *              computes: y(1:n) <- A*x(1:n)
 *                        where A is the principal matrix.
 *
-*     delta   : local truncation error `safety factor'
-*
-*     gamma   : stepsize `shrinking factor'
-*
 *     itrace : (input) running mode. 0=silent, 1>=print happy breakdown,
 *              2>=print step-by-step info.
 *
@@ -4637,14 +4664,24 @@ c$$$*----------------------------------------------------------------------|
 *-----The following parameters may also be adjusted herein-------------|
 *
       integer mxreject, ideg
+      double precision delta, gamma
       parameter( mxreject = 0,
-     .           ideg     = 6 )
+     .           ideg     = 6, 
+     .           delta    = 1.2d0,
+     .           gamma    = 0.9d0 )
 
+*     mxstep  : maximum allowable number of integration steps.
+*               The value 0 means an infinite number of steps.
+* 
 *     mxreject: maximum allowable number of rejections at each step. 
 *               The value 0 means an infinite number of rejections.
 *
 *     ideg    : the Pade approximation of type (ideg,ideg) is used as 
 *               an approximation to exp(H).
+*
+*     delta   : local truncation error `safety factor'
+*
+*     gamma   : stepsize `shrinking factor'
 *
 *----------------------------------------------------------------------|
 *     Roger B. Sidje (rbs@maths.uq.edu.au)
@@ -4663,7 +4700,7 @@ c$$$*----------------------------------------------------------------------|
      .                 avnorm, hj1j, SQR1
       complex*16 hjj
 
-      intrinsic AINT,ABS,CMPLX,DBLE,INT,LOG10,MAX,MIN,NINT,SIGN,SQRT
+      intrinsic AINT,ABS,DCMPLX,DBLE,INT,LOG10,MAX,MIN,NINT,SIGN,SQRT
       complex*16 ZDOTC
       double precision DZNRM2
 *
@@ -4764,8 +4801,8 @@ c$$$*----------------------------------------------------------------------|
             t_step = t_out-t_now
             goto 300
          endif
-         wsp(ih+(j-1)*mh+j) = CMPLX( hj1j )
-         wsp(ih+j*mh+j-1) = CMPLX( hj1j )
+         wsp(ih+(j-1)*mh+j) = DCMPLX( hj1j )
+         wsp(ih+j*mh+j-1) = DCMPLX( hj1j )
          call ZDSCAL( n, 1.0d0/hj1j, wsp(j1v),1 )
          j1v = j1v + n
  200  continue
@@ -4852,7 +4889,7 @@ c$$$*----------------------------------------------------------------------|
       endif
 *
       mx = mbrkdwn + MAX( 0,k1-2 )
-      hjj = CMPLX( beta )
+      hjj = DCMPLX( beta )
       call ZGEMV( 'n', n,mx,hjj,wsp(iv),n,wsp(iphih),1,ONE,w,1 )
 *
 *---  suggested value for the next stepsize ...
@@ -4895,13 +4932,13 @@ c$$$*----------------------------------------------------------------------|
       iwsp(6) = ibrkflag
       iwsp(7) = mbrkdwn
 
-      wsp(1)  = CMPLX( step_min )
-      wsp(2)  = CMPLX( step_max )
-      wsp(3)  = CMPLX( 0.0d0 )
-      wsp(4)  = CMPLX( 0.0d0 )
-      wsp(5)  = CMPLX( x_error )
-      wsp(6)  = CMPLX( s_error )
-      wsp(7)  = CMPLX( tbrkdwn )
-      wsp(8)  = CMPLX( sgn*t_now )
+      wsp(1)  = DCMPLX( step_min )
+      wsp(2)  = DCMPLX( step_max )
+      wsp(3)  = DCMPLX( 0.0d0 )
+      wsp(4)  = DCMPLX( 0.0d0 )
+      wsp(5)  = DCMPLX( x_error )
+      wsp(6)  = DCMPLX( s_error )
+      wsp(7)  = DCMPLX( tbrkdwn )
+      wsp(8)  = DCMPLX( sgn*t_now )
  600  END
 *----------------------------------------------------------------------|

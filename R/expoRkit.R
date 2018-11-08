@@ -62,8 +62,6 @@
 ##' means all trace information printed from Expokit.
 ##' @param mxstep \code{integer}. Maximum allowable number of
 ##' integration steps. The value 0 means an infinite number of steps. Default 10000.
-##' @param delta \code{numeric}. A 'safety factor'. Default value 1.2.
-##' @param gamma \code{numeric}. A 'safety factor'. Default value 0.9.
 ##' @return The solution, \eqn{w}, of the ODE as a \code{numeric} or
 ##' \code{complex} vector of length \eqn{n}.
 ##' @references Sidje, R. B. (1998) Expokit. Software Package for Computing Matrix
@@ -124,7 +122,7 @@
 ##' @useDynLib expoRkit
 Rexpv <- function(a, ia, ja, n, v, t = 1.0, storage = 'CCS', u = NULL,
                   anorm = max(abs(a)), Markov = FALSE, m = 30L, tol =
-                  0.0, itrace = 0L, mxstep = 10000L, delta = 1.2, gamma = 0.9) {
+                  0.0, itrace = 0L, mxstep = 10000L) {
   if (n <= 1)
     stop("The matrix dimension, argument 'n', cannot be 1.")
   m <- as.integer(min(m, n-1))
@@ -154,9 +152,7 @@ Rexpv <- function(a, ia, ja, n, v, t = 1.0, storage = 'CCS', u = NULL,
                           anorm = as.numeric(anorm)[1],
                           itrace = as.integer(itrace)[1],
                           iflag = integer(1),
-                          sflag = as.integer(sflag)[1],
-                          delta = as.numeric(delta)[1],
-                          gamma = as.numeric(gamma)[1]
+                          sflag = as.integer(sflag)[1]
                           )
     } else if (is.numeric(a) & Markov) {
       outlist <- .Fortran("R_DMEXPV",
@@ -174,9 +170,7 @@ Rexpv <- function(a, ia, ja, n, v, t = 1.0, storage = 'CCS', u = NULL,
                           anorm = as.numeric(anorm)[1],
                           itrace = as.integer(itrace)[1],
                           iflag = integer(1),
-                          sflag = as.integer(sflag)[1],
-                          delta = as.numeric(delta)[1],
-                          gamma = as.numeric(gamma)[1]
+                          sflag = as.integer(sflag)[1]
                           )
     } else if (is.complex(a) & !Markov) {
       outlist <- .Fortran("R_ZGEXPV",
@@ -194,9 +188,7 @@ Rexpv <- function(a, ia, ja, n, v, t = 1.0, storage = 'CCS', u = NULL,
                           anorm = as.numeric(anorm)[1],
                           itrace = as.integer(itrace)[1],
                           iflag = integer(1),
-                          sflag = as.integer(sflag)[1],
-                          delta = as.numeric(delta)[1],
-                          gamma = as.numeric(gamma)[1]
+                          sflag = as.integer(sflag)[1]
                           )
     } else {
       stop("Markov condition cannot be enforced for a complex matrix.")
@@ -223,9 +215,7 @@ Rexpv <- function(a, ia, ja, n, v, t = 1.0, storage = 'CCS', u = NULL,
                           anorm = as.numeric(anorm)[1],
                           itrace = as.integer(itrace)[1],
                           iflag = integer(1),
-                          sflag = as.integer(sflag)[1],
-                          delta = as.numeric(delta)[1],
-                          gamma = as.numeric(gamma)[1]
+                          sflag = as.integer(sflag)[1]
                           )
     } else if (is.complex(a)) {
       outlist <- .Fortran("R_ZGPHIV",
@@ -244,9 +234,7 @@ Rexpv <- function(a, ia, ja, n, v, t = 1.0, storage = 'CCS', u = NULL,
                           anorm = as.numeric(anorm)[1],
                           itrace = as.integer(itrace)[1],
                           iflag = integer(1),
-                          sflag = as.integer(sflag)[1],
-                          delta = as.numeric(delta)[1],
-                          gamma = as.numeric(gamma)[1]
+                          sflag = as.integer(sflag)[1]
                           )
     } else {
       stop("The matrix entries must be 'numeric' or 'complex'.")

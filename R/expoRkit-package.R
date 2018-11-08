@@ -4,8 +4,8 @@
 ##' \tabular{ll}{
 ##' Package: \tab expoRkit \cr
 ##' Type: \tab Package \cr
-##' Version: \tab 0.9.2 \cr
-##' Date: \tab 2012-05-05\cr
+##' Version: \tab 0.9.3 \cr
+##' Date: \tab 2018-11-08\cr
 ##' License: \tab GPL (>= 2)\cr
 ##' LazyLoad: \tab yes \cr
 ##' }
@@ -14,7 +14,7 @@
 ##' matrix exponential, or rather, its action on a vector, for large
 ##' sparse matrices. This can also be understood as computing the
 ##' solution of a system of linear ordinary first order differential
-##' equations. This package provides an R-interface to some of the
+##' equations. This package provides an R interface to some of the
 ##' Fortran subroutines from Expokit.
 ##'
 ##' The Fortran package was developed by Roger B. Sidje, see
@@ -32,5 +32,5 @@
 ##' \email{Niels.R.Hansen@@math.ku.dk}.
 ##' @keywords package 
 ##' @docType package
-##' @import methods
+##' @importFrom methods as callGeneric
 NULL

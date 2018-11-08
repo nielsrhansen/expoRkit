@@ -1,8 +1,8 @@
 Package: expoRkit
 Type: Package
 Title: Expokit in R
-Version: 0.9.2
-Date: 2015-05-05
+Version: 0.9.3
+Date: 2018-11-08
 Authors@R: c(person("Roger B.", "Sidje", email = "roger.b.sidje@ua.edu",
     role = c("aut", "cph")),
     person("Niels Richard", "Hansen",
@@ -13,9 +13,9 @@ Maintainer: Niels Richard Hansen <Niels.R.Hansen@math.ku.dk>
 Depends:
     R (>= 2.14.1)
 Imports:
-    methods,
     Matrix,
-    SparseM
+    SparseM,
+    methods
 Description: An R-interface to the Fortran package Expokit.
 URL: https://github.com/nielsrhansen/expoRkit
 License: GPL (>= 2)
@@ -25,3 +25,4 @@ Collate:
     'expv.R'
     'expoRkit-package.R'
     'data.R'
+RoxygenNote: 6.1.0
